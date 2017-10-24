@@ -53,6 +53,8 @@ You also must provide unit tests for your software.
 * packet contents visualization
 * global traffic visualization
 
+See [Libpcap File Format](https://wiki.wireshark.org/Development/LibpcapFileFormat)
+
 ### Optional features
 * on the fly packet modification
 * ARP poisoning 
