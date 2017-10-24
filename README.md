@@ -2,11 +2,12 @@
 
 [Example for begining](http://www.binarytides.com/packet-sniffer-code-in-c-using-linux-sockets-bsd-part-2/)
 
-##Project info
+## Project info
+
 **Name:** Yellow
 ***Reading material:*** [RFC129](https://www.rfc-editor.org/pdfrfc/rfc129.txt.pdf), [RFC147](https://www.rfc-editor.org/rfc/pdfrfc/rfc147.txt.pdf), [raw sockets](https://en.wikipedia.org/wiki/Raw_socket)
 
-##Validation criteria
+## Validation criteria
 
 The final project must be :
 * completed
