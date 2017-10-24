@@ -53,8 +53,7 @@ You also must provide unit tests for your software.
 * packet contents visualization
 * global traffic visualization
 
-
-- Optional features -
+### Optional features
 * on the fly packet modification
 * ARP poisoning 
 * Man In The Middle attack
