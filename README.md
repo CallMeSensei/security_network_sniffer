@@ -53,7 +53,7 @@ You also must provide unit tests for your software.
 * packet contents visualization
 * global traffic visualization
 
-See [Libpcap File Format](https://wiki.wireshark.org/Development/LibpcapFileFormat)
+See [Libpcap File Format](https://wiki.wireshark.org/Development/LibpcapFileFormat), [DataLinkTypes](http://www.tcpdump.org/linktypes.html)
 
 ### Optional features
 * on the fly packet modification
