@@ -1,19 +1,33 @@
+#
+#	Network security project - file: Makefile
+#
+#	Author: alexandre.jallon@epitech.eu
+#	Created on: 2017-11-01 17:36:41
+#
 
-CC	=	cc
-NAME	=	sniffer
-RM	=	rm -f
+SRC =		src/sniffer.c
 
-CFLAGS	=	-Wall -Wextra -I./include
+AUTO_SAVED =	src/*~ include/*~
 
-SRCS	=	src/example.c
+OBJ =		$(SRC:.c=.o)
 
-OBJS = $(SRCS:.c=.o)
+NAME =		sniffer
 
-all:	$(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+RM =		rm -f
+
+CC =		gcc -o
+
+CFLAGS =	-W -Wall -Werror
+
+all:		$(NAME)
+
+$(NAME):	$(OBJ)
+		$(CC) $(NAME) $(OBJ) $(CFLAGS)
 
 clean:
-	$(RM) $(OBJS)
+		$(RM) $(OBJ) $(AUTO_SAVED)
 
-fclean: clean
-	$(RM) $(NAME)
+fclean:		clean
+		$(RM) $(NAME)
+
+re:		fclean all
