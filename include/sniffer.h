@@ -14,11 +14,15 @@
 #define EXIT_SUCCESS 0
 #define BUF_SIZE 2048
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <net/ethernet.h>
-#include <unistd.h>
+#include <sys/types.h> //socket, recvfrom
+#include <sys/socket.h> //socket, recvfrom
+#include <arpa/inet.h> //htons
+#include <stdio.h> //perror, printf
+#include <net/ethernet.h> //ETH_P_ALL, struct ethhdr
+#include <unistd.h> //close
+#include <linux/ip.h> //struct iphdr
+
+typedef struct sockaddr_in t_sockaddr_in;
+typedef struct iphdr t_iphdr;
 
 #endif /* _SNIFFER_H_ */
