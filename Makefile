@@ -17,7 +17,7 @@ RM =		rm -f
 
 CC =		gcc -o
 
-CFLAGS =	-W -Wall -Werror
+CFLAGS =	-W -Wall -Werror -I./include
 
 all:		$(NAME)
 

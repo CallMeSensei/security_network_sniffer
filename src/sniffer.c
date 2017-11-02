@@ -7,7 +7,7 @@
 **
 */
 
-#include "../include/sniffer.h"
+#include "sniffer.h"
 
 int			main()
 {
