@@ -6,7 +6,7 @@
 #
 
 SRC =		src/sniffer.c \
-			src/file_capture.c
+		src/file_capture.c
 
 AUTO_SAVED =	src/*~ include/*~
 

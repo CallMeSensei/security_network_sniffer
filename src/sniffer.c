@@ -11,24 +11,24 @@
 
 void		check_proto(t_iphdr *iph)
 {
-switch (iph->protocol) //Check the Protocol and do accordingly...
-  {
-  case 1:  //ICMP
-    printf("Protocol: ICMP\n");
-    break;
-  case 2:  //IGMP
-    printf("Protocol: IGMP\n");
-    break;
-  case 6:  //TCP
-    printf("Protocol: TCP\n");
-    break;
-  case 17: //UDP
-    printf("Protocol: UDP\n");
-    break;
-  default: //Other
-    printf("Protocol: ???\n");
-    break;
-  }
+  switch (iph->protocol) //Check the Protocol and do accordingly...
+    {
+    case 1:  //ICMP
+      printf("Protocol: ICMP\n");
+      break;
+    case 2:  //IGMP
+      printf("Protocol: IGMP\n");
+      break;
+    case 6:  //TCP
+      printf("Protocol: TCP\n");
+      break;
+    case 17: //UDP
+      printf("Protocol: UDP\n");
+      break;
+    default: //Other
+      printf("Protocol: ???\n");
+      break;
+    }
 }
 
 int		main()
@@ -67,4 +67,3 @@ int		main()
     }
   return (EXIT_SUCCESS);
 }
-  
