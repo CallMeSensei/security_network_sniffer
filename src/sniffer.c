@@ -7,7 +7,7 @@
 **
 */
 
-#include "../include/sniffer.h"
+#include "sniffer.h"
 
 void		check_proto(t_iphdr *iph)
 {
