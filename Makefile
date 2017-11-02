@@ -5,7 +5,8 @@
 #	Created on: 2017-11-01 17:36:41
 #
 
-SRC =		src/sniffer.c
+SRC =		src/sniffer.c \
+			src/file_capture.c
 
 AUTO_SAVED =	src/*~ include/*~
 

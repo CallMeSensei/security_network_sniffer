@@ -3,7 +3,7 @@
 
 # include <stdint.h>
 
-typedef struct  file_capture_header_s {
+typedef struct  fcap_global_hdr_s {
   uint32_t      magic_number;	/* magic number */
   uint16_t      version_major;  /* major version number */
   uint16_t      version_minor;  /* minor version number */
@@ -11,7 +11,7 @@ typedef struct  file_capture_header_s {
   uint32_t      sigfigs;        /* accuracy of timestamps */
   uint32_t      snaplen;        /* max length of captured packets, in octets */
   uint32_t      network;        /* data link type */
-}               file_capture_header_t;
+}               fcap_global_hdr_t;
 
 
 typedef struct  fcap_packet_hdr_s {
