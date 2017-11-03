@@ -5,20 +5,20 @@
 #	Created on: 2017-11-01 17:36:41
 #
 
-SRC =		src/sniffer.c \
-		src/file_capture.c
+SRC =		src/Sniffer.cpp \
+			src/Packet.cpp
 
 AUTO_SAVED =	src/*~ include/*~
 
-OBJ =		$(SRC:.c=.o)
+OBJ =		$(SRC:.cpp=.o)
 
-NAME =		sniffer
+NAME =		Sniffer
 
 RM =		rm -f
 
-CC =		gcc -o
+CC =		g++ -o
 
-CFLAGS =	-W -Wall -Werror -I./include
+CPPFLAGS =	-W -Wall -Werror -I./include
 
 all:		$(NAME)
 
