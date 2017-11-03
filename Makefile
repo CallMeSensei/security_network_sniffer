@@ -18,7 +18,7 @@ RM =		rm -f
 
 CC =		g++ -o
 
-CPPFLAGS =	-W -Wall -Werror -I./include
+CPPFLAGS =	-I./include -std=c++11 -W -Wall -Werror
 
 all:		$(NAME)
 
