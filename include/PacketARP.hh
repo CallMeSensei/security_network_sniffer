@@ -1,9 +1,9 @@
-#ifndef PACKET_ARP_H_
-# define PACKET_ARP_H_
+#ifndef PACKET_ARP_HH_
+# define PACKET_ARP_HH_
 
 # include <array>
 
-# include "PacketARP.h"
+# include "PacketEthernet.hh"
 
 class PacketARP: public PacketEthernet
 {
@@ -27,4 +27,4 @@ public:
 
 std::ostream& operator<<(std::ostream &out, PacketARP packet);
 
-#endif /* !PACKET_ARP_H_ */
+#endif /* !PACKET_ARP_HH_ */
