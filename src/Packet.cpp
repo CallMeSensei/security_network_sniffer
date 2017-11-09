@@ -1,11 +1,16 @@
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 
 #include "Packet.h"
 
 Packet::Packet(uint8_t *data, std::size_t len)
 {
     _data.assign(data, data + len);
+}
+
+Packet::Packet()
+{
 }
 
 Packet::~Packet()
@@ -29,7 +34,7 @@ std::ostream& operator<<(std::ostream &out, Packet packet)
     out << std::hex;
     for (auto &byte : packet.get_data())
     {
-        out << (unsigned int)byte;
+        out << std::setfill('0') << std::setw(2) << (unsigned int)byte;
     }
     out << std::dec;
     return out;

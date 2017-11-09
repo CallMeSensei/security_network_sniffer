@@ -13,6 +13,7 @@ protected:
 
 public:
     Packet(uint8_t* data, std::size_t len);
+    Packet();
     ~Packet();
 
     std::size_t           get_size(void) const;

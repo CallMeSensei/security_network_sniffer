@@ -11,6 +11,7 @@
 
 #include "Sniffer.h"
 #include "Packet.h"
+#include "PacketEthernet.h"
 
 void		check_proto(t_iphdr *iph)
 {
@@ -60,7 +61,7 @@ int		main()
           printf("recvfrom failed\n");
           return (EXIT_FAILURE);
         }
-      packet = new Packet((uint8_t*)&buffer, recvlen);
+      packet = new PacketEthernet((uint8_t*)&buffer, recvlen);
       i++;
       iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
       check_proto(iph);
@@ -68,6 +69,9 @@ int		main()
       //printf("Addr: %s\nRecv: %s\n\n", inet_ntoa(saddrin.sin_addr), buffer);
       std::cout << "Packet n°" << i << " of size[" << packet->get_size() << "]:" << std::endl <<
       "[" << *packet << "]" << std::endl;
+
+      std::cout << *(static_cast<PacketEthernet*>(packet)) << std::endl;
+
       delete packet;
     }
   if (close(fd) < 0)

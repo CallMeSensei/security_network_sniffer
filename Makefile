@@ -6,7 +6,8 @@
 #
 
 SRC =		src/Sniffer.cpp \
-			src/Packet.cpp
+			src/Packet.cpp \
+			src/PacketEthernet.cpp
 
 AUTO_SAVED =	src/*~ include/*~
 
