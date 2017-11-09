@@ -7,7 +7,7 @@
 
 class PacketEthernet: public Packet
 {
-protected:
+private:
     std::array<uint8_t, 6>          _mac_destination;
     std::array<uint8_t, 6>          _mac_source;
     std::array<uint8_t, 2>          _type;
