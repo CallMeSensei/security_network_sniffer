@@ -50,8 +50,8 @@ std::ostream& operator<<(std::ostream &out, PacketEthernet packet)
     }
     out << std::dec << "]" << std::endl;
 
-    // Ethertype
-    out << "Ethertype: [" << std::hex;
+    // Type
+    out << "Type: [" << std::hex;
     for (auto &byte : packet.get_type())
     {
         out << std::setfill('0') << std::setw(2) << (unsigned int)byte;
