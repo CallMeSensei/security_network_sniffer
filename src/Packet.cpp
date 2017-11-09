@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "Packet.h"
+#include "Packet.hh"
 
 Packet::Packet(uint8_t *data, std::size_t len)
 {

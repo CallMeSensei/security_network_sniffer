@@ -1,5 +1,5 @@
-#ifndef PACKET_H_
-# define PACKET_H_
+#ifndef PACKET_HH_
+# define PACKET_HH_
 
 # include <cstddef>
 # include <cstdint>
@@ -22,4 +22,4 @@ public:
 
 std::ostream& operator<<(std::ostream &out, Packet packet);
 
-#endif /* !PACKET_H_ */
+#endif /* !PACKET_HH_ */

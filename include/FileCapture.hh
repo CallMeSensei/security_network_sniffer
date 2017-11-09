@@ -1,5 +1,5 @@
-#ifndef FILE_CAPTURE_H_
-# define FILE_CAPTURE_H_
+#ifndef FILE_CAPTURE_HH_
+# define FILE_CAPTURE_HH_
 
 # include <stdint.h>
 
@@ -21,4 +21,4 @@ typedef struct  fcap_packet_hdr_s {
   uint32_t      orig_len;       /* actual length of packet */
 }               fcap_packet_hdr_t;
 
-#endif /* !FILE_CAPTURE_H_ */
+#endif /* !FILE_CAPTURE_HH_ */

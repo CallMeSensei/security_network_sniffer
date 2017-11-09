@@ -9,9 +9,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "Sniffer.h"
-#include "Packet.h"
-#include "PacketEthernet.h"
+#include "Sniffer.hh"
+#include "Packet.hh"
+#include "PacketEthernet.hh"
 
 void		check_proto(t_iphdr *iph)
 {
@@ -29,6 +29,9 @@ void		check_proto(t_iphdr *iph)
     case 17: //UDP
       printf("Protocol: UDP\n");
       break;
+    case 161: //ARP
+      printf("Protocol: ARP\n");
+      break;
     default: //Other
       printf("Protocol: ???\n");
       break;
@@ -37,14 +40,14 @@ void		check_proto(t_iphdr *iph)
 
 int		main()
 {
-  Packet  *packet;
+  Packet	*packet;
   int  		fd;
   t_sockaddr_in	saddrin;
   int		saddrinlen;
   int		recvlen;
   uint8_t		buffer[BUF_SIZE];
   t_iphdr	*iph;
-  int i = 0;
+  int		i = 0;
 
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
   if (fd < 0)
@@ -66,10 +69,10 @@ int		main()
       iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
       check_proto(iph);
       saddrin.sin_addr.s_addr = iph->saddr;
-      //printf("Addr: %s\nRecv: %s\n\n", inet_ntoa(saddrin.sin_addr), buffer);
+      //printf("Addr: %s\nRecv: %s\n\n", , buffer);
+
       std::cout << "Packet n°" << i << " of size[" << packet->get_size() << "]:" << std::endl <<
       "[" << *packet << "]" << std::endl;
-
       std::cout << *(static_cast<PacketEthernet*>(packet)) << std::endl;
 
       delete packet;

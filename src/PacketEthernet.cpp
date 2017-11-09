@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "PacketEthernet.h"
+#include "PacketEthernet.hh"
 
 PacketEthernet::PacketEthernet(uint8_t *data, std::size_t len): Packet(data, len)
 {
