@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
-#include "PacketEthernet.h"
-#include "PacketARP.h"
+#include "PacketEthernet.hh"
+#include "PacketARP.hh"
 
 PacketARP::PacketARP(uint8_t *data, std::size_t len): PacketEthernet(data, len)
 {
