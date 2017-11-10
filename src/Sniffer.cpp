@@ -69,6 +69,7 @@ int		main()
       check_proto(iph);
       saddrin.sin_addr.s_addr = iph->saddr;
 
+      std::cout << "#########################" << std::endl;
       packet->print();
 
       delete packet;
