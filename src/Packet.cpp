@@ -7,6 +7,7 @@
 Packet::Packet(uint8_t *data, std::size_t len)
 {
     _data.assign(data, data + len);
+    _payload.assign(data, data + len);
 }
 
 Packet::Packet()

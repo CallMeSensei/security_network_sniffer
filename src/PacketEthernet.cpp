@@ -7,20 +7,18 @@
 
 PacketEthernet::PacketEthernet(uint8_t *data, std::size_t len): Packet(data, len)
 {
-    std::copy(_data.begin() + offsetof(struct ether_header, ether_dhost),
-        _data.begin() + offsetof(struct ether_header, ether_dhost) + ETH_ALEN,
+    std::copy(_payload.begin() + offsetof(struct ether_header, ether_dhost),
+    _payload.begin() + offsetof(struct ether_header, ether_dhost) + ETH_ALEN,
         _mac_destination.begin());
-    std::copy(_data.begin() + offsetof(struct ether_header, ether_shost),
-        _data.begin() + offsetof(struct ether_header, ether_shost) + ETH_ALEN,
+    std::copy(_payload.begin() + offsetof(struct ether_header, ether_shost),
+    _payload.begin() + offsetof(struct ether_header, ether_shost) + ETH_ALEN,
         _mac_source.begin());
-    std::copy(_data.begin() + offsetof(struct ether_header, ether_type),
-        _data.begin() + offsetof(struct ether_header, ether_type) + 2,
+    std::copy(_payload.begin() + offsetof(struct ether_header, ether_type),
+    _payload.begin() + offsetof(struct ether_header, ether_type) + 2,
         _type.begin());
 
-    _payload.resize(_data.end() - _data.begin() + sizeof(struct ether_header));
-    std::copy(_data.begin() + sizeof(struct ether_header),
-        _data.end(),
-        _payload.begin());
+    _payload.assign(_payload.begin() + sizeof(struct ether_header),
+        _payload.end());
 }
 
 PacketEthernet::~PacketEthernet()
