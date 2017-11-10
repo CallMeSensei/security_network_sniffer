@@ -25,6 +25,8 @@ public:
     std::array<uint8_t, 1>          get_hlen(void);
     std::array<uint8_t, 1>          get_plen(void);
     std::array<uint8_t, 2>          get_op(void);
+
+    void                            print(void) const;
 };
 
 std::ostream& operator<<(std::ostream &out, PacketARP packet);

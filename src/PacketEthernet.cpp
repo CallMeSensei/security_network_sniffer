@@ -42,6 +42,8 @@ std::array<uint8_t, 2>              PacketEthernet::get_type(void)
 
 void                                PacketEthernet::print(void) const {
     
+    this->Packet::print();
+
     // MAC Destination
     std::cout << "MAC Destination: [" << std::hex;
     for (auto &byte : _mac_destination)

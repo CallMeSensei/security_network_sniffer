@@ -45,7 +45,7 @@ void                    Packet::print(void) const {
     {
         std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
     }
-    std::cout << std::dec;
+    std::cout << std::dec << std::endl;
 }
 
 std::ostream& operator<<(std::ostream &out, Packet packet)

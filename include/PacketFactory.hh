@@ -3,6 +3,7 @@
 
 # include "Packet.hh"
 # include "PacketEthernet.hh"
+# include "PacketIP.hh"
 # include "PacketARP.hh"
 
 class PacketFactory {

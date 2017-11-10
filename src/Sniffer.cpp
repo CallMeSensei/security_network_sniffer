@@ -68,8 +68,7 @@ int		main()
       iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
       check_proto(iph);
       saddrin.sin_addr.s_addr = iph->saddr;
-      //printf("Addr: %s\nRecv: %s\n\n", , buffer);
-      std::cout << *packet << std::endl;
+
       packet->print();
 
       delete packet;
