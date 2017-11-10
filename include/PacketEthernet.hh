@@ -3,14 +3,16 @@
 
 # include <array>
 
+# include <net/ethernet.h>
+
 # include "Packet.hh"
 
 class PacketEthernet: public Packet
 {
 private:
-    std::array<uint8_t, 6>          _mac_destination;
-    std::array<uint8_t, 6>          _mac_source;
-    std::array<uint8_t, 2>          _type;
+    std::array<uint8_t, ETH_ALEN>          _mac_destination;
+    std::array<uint8_t, ETH_ALEN>          _mac_source;
+    std::array<uint8_t, 2>                 _type;
 
 public:
     PacketEthernet(uint8_t *data, std::size_t len);

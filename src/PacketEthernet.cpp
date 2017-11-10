@@ -1,14 +1,21 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <cstddef>
 
 #include "PacketEthernet.hh"
 
 PacketEthernet::PacketEthernet(uint8_t *data, std::size_t len): Packet(data, len)
 {
-    std::copy(_data.begin(), _data.begin() + 6, _mac_destination.begin());
-    std::copy(_data.begin() + 6, _data.begin() + 12, _mac_source.begin());
-    std::copy(_data.begin() + 12, _data.begin() + 14, _type.begin());
+    std::copy(_data.begin() + offsetof(struct ether_header, ether_dhost),
+        _data.begin() + offsetof(struct ether_header, ether_dhost) + ETH_ALEN,
+        _mac_destination.begin());
+    std::copy(_data.begin() + offsetof(struct ether_header, ether_shost),
+        _data.begin() + offsetof(struct ether_header, ether_shost) + ETH_ALEN,
+        _mac_source.begin());
+    std::copy(_data.begin() + offsetof(struct ether_header, ether_type),
+        _data.begin() + offsetof(struct ether_header, ether_type) + 2,
+        _type.begin());
 }
 
 PacketEthernet::~PacketEthernet()
