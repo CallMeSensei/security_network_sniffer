@@ -14,10 +14,12 @@ protected:
 public:
     Packet(uint8_t* data, std::size_t len);
     Packet();
-    ~Packet();
+    virtual ~Packet();
 
     std::size_t           get_size(void) const;
     std::vector<uint8_t>  get_data(void) const;
+
+    virtual void            print(void) const;
 };
 
 std::ostream& operator<<(std::ostream &out, Packet packet);

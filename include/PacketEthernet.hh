@@ -14,11 +14,13 @@ private:
 
 public:
     PacketEthernet(uint8_t *data, std::size_t len);
-    ~PacketEthernet();
+    virtual ~PacketEthernet();
 
     std::array<uint8_t, 6>          get_mac_destination(void);
     std::array<uint8_t, 6>          get_mac_source(void);
     std::array<uint8_t, 2>          get_type(void);
+
+    virtual void                    print(void) const;
 };
 
 std::ostream& operator<<(std::ostream &out, PacketEthernet packet);

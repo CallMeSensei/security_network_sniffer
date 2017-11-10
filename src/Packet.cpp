@@ -27,6 +27,16 @@ std::vector<uint8_t>  Packet::get_data(void) const
     return _data;
 }
 
+void                    Packet::print(void) const {
+
+    std::cout << std::hex;
+    for (auto &byte : this->get_data())
+    {
+        std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    std::cout << std::dec;
+}
+
 std::ostream& operator<<(std::ostream &out, Packet packet)
 {
     std::vector<uint8_t>::const_iterator    it;

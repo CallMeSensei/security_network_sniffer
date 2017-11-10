@@ -16,7 +16,7 @@ private:
 
 public:
     PacketARP(uint8_t *data, std::size_t len);
-    ~PacketARP();
+    virtual ~PacketARP();
 
     std::array<uint8_t, 2>          get_htype(void);
     std::array<uint8_t, 2>          get_ptype(void);

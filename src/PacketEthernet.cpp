@@ -30,10 +30,35 @@ std::array<uint8_t, 2>              PacketEthernet::get_type(void)
     return _type;
 }
 
+void                                PacketEthernet::print(void) const {
+    
+    // MAC Destination
+    std::cout << "MAC Destination: [" << std::hex;
+    for (auto &byte : _mac_destination)
+    {
+        std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    std::cout << std::dec << "]" << std::endl;
+
+    // MAC Source
+    std::cout << "MAC Source: [" << std::hex;
+    for (auto &byte : _mac_source)
+    {
+        std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    std::cout << std::dec << "]" << std::endl;
+
+    // Type
+    std::cout << "Type: [" << std::hex;
+    for (auto &byte : _type)
+    {
+        std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    std::cout << std::dec << "]" << std::endl;
+}
+
 std::ostream& operator<<(std::ostream &out, PacketEthernet packet)
 {
-    std::vector<uint8_t>::const_iterator    it;
-
     // MAC Destination
     out << "MAC Destination: [" << std::hex;
     for (auto &byte : packet.get_mac_destination())

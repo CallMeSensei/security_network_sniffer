@@ -10,8 +10,7 @@
 #include <iostream>
 
 #include "Sniffer.hh"
-#include "Packet.hh"
-#include "PacketEthernet.hh"
+#include "PacketFactory.hh"
 
 void		check_proto(t_iphdr *iph)
 {
@@ -64,16 +63,13 @@ int		main()
           printf("recvfrom failed\n");
           return (EXIT_FAILURE);
         }
-      packet = new PacketEthernet((uint8_t*)&buffer, recvlen);
+      packet = PacketFactory::create((uint8_t*)&buffer, recvlen);
       i++;
       iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
       check_proto(iph);
       saddrin.sin_addr.s_addr = iph->saddr;
       //printf("Addr: %s\nRecv: %s\n\n", , buffer);
-
-      std::cout << "Packet n°" << i << " of size[" << packet->get_size() << "]:" << std::endl <<
-      "[" << *packet << "]" << std::endl;
-      std::cout << *(static_cast<PacketEthernet*>(packet)) << std::endl;
+      packet->print();
 
       delete packet;
     }
