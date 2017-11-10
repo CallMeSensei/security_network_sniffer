@@ -27,6 +27,16 @@ std::vector<uint8_t>  Packet::get_data(void) const
     return _data;
 }
 
+std::size_t                         Packet::get_payload_size(void) const {
+    
+    return _payload.size();
+}
+    
+std::vector<uint8_t>                Packet::get_payload(void) const {
+
+    return _payload;
+}
+
 void                    Packet::print(void) const {
 
     std::cout << std::hex;

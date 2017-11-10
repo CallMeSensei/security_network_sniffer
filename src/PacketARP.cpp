@@ -2,12 +2,12 @@
 #include <iostream>
 #include <iomanip>
 
-#include "PacketEthernet.hh"
 #include "PacketARP.hh"
 
 PacketARP::PacketARP(uint8_t *data, std::size_t len): PacketEthernet(data, len)
 {
-    std::copy(_data.begin() + 14, _data.begin() + 16, _htype.begin());
+    std::copy(_data.begin() + 14,
+        _data.begin() + 16, _htype.begin());
 }
 
 PacketARP::~PacketARP()

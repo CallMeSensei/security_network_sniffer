@@ -16,18 +16,23 @@ PacketEthernet::PacketEthernet(uint8_t *data, std::size_t len): Packet(data, len
     std::copy(_data.begin() + offsetof(struct ether_header, ether_type),
         _data.begin() + offsetof(struct ether_header, ether_type) + 2,
         _type.begin());
+
+    _payload.resize(_data.end() - _data.begin() + sizeof(struct ether_header));
+    std::copy(_data.begin() + sizeof(struct ether_header),
+        _data.end(),
+        _payload.begin());
 }
 
 PacketEthernet::~PacketEthernet()
 {
 }
 
-std::array<uint8_t, 6>              PacketEthernet::get_mac_destination(void)
+std::array<uint8_t, ETH_ALEN>       PacketEthernet::get_mac_destination(void)
 {
     return _mac_destination;
 }
 
-std::array<uint8_t, 6>              PacketEthernet::get_mac_source(void)
+std::array<uint8_t, ETH_ALEN>       PacketEthernet::get_mac_source(void)
 {
     return _mac_source;
 }
@@ -58,6 +63,14 @@ void                                PacketEthernet::print(void) const {
     // Type
     std::cout << "Type: [" << std::hex;
     for (auto &byte : _type)
+    {
+        std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    std::cout << std::dec << "]" << std::endl;
+
+    // Payload
+    std::cout << "Payload: [" << std::hex;
+    for (auto &byte : _payload)
     {
         std::cout << std::setfill('0') << std::setw(2) << (unsigned int)byte;
     }

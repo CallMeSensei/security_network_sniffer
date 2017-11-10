@@ -3,6 +3,8 @@
 
 # include <array>
 
+# include <net/if_arp.h>
+
 # include "PacketEthernet.hh"
 
 class PacketARP: public PacketEthernet
