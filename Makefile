@@ -6,6 +6,7 @@
 #
 
 SRC =		src/Sniffer.cpp \
+			src/FileCapture.cpp \
 			src/PacketFactory.cpp \
 			src/Packet.cpp \
 			src/PacketEthernet.cpp \
