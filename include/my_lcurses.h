@@ -3,7 +3,7 @@
 
 # include <iostream>
 # include <cstring>
-# include <ncurses.h>
+# include <curses.h>
 
 # include "ScrollTab.h"
 # include "Square.h"
