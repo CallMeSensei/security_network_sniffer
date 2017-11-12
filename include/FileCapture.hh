@@ -1,7 +1,12 @@
-#ifndef FILE_CAPTURE_H_
-# define FILE_CAPTURE_H_
+#ifndef FILE_CAPTURE_HH_
+# define FILE_CAPTURE_HH_
 
+# include <fstream>
+# include <string>
 # include <stdint.h>
+
+# include "DataLinkType.hh"
+# include "Packet.hh"
 
 typedef struct  fcap_global_hdr_s {
   uint32_t      magic_number;	/* magic number */
@@ -21,4 +26,16 @@ typedef struct  fcap_packet_hdr_s {
   uint32_t      orig_len;       /* actual length of packet */
 }               fcap_packet_hdr_t;
 
-#endif /* !FILE_CAPTURE_H_ */
+class FileCapture {
+
+private:
+  std::ofstream       _file;
+
+public:
+  FileCapture(std::string name, int dlt);
+  ~FileCapture();
+
+  FileCapture         &operator<<(Packet&);
+};
+
+#endif /* !FILE_CAPTURE_HH_ */

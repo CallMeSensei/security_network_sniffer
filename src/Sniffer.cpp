@@ -9,9 +9,10 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "Sniffer.h"
-#include "Packet.h"
+#include "Sniffer.hh"
+#include "Packet.hh"
 #include "Display.h"
+#include "PacketFactory.hh"
 
 void		check_proto(t_iphdr *iph)
 {
@@ -29,6 +30,9 @@ void		check_proto(t_iphdr *iph)
     case 17: //UDP
       printf("Protocol: UDP\n");
       break;
+    case 161: //ARP
+      printf("Protocol: ARP\n");
+      break;
     default: //Other
       printf("Protocol: ???\n");
       break;
@@ -44,15 +48,7 @@ int		main()
   int		recvlen;
   uint8_t	buffer[BUF_SIZE];
   t_iphdr	*iph;
-  int i = 0;
-
-  Display*	Disp = new Display();
-  Disp->init_Display();
-  Disp->floop();
-  while(Disp->loop());
-  Disp->end_Display();
-  return (0);
-
+  int		i = 0;
   
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
   if (fd < 0)
@@ -69,14 +65,15 @@ int		main()
           printf("recvfrom failed\n");
           return (EXIT_FAILURE);
         }
-      packet = new Packet((uint8_t*)&buffer, recvlen);
+      packet = PacketFactory::create((uint8_t*)&buffer, recvlen);
       i++;
       iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
       check_proto(iph);
       saddrin.sin_addr.s_addr = iph->saddr;
-      //printf("Addr: %s\nRecv: %s\n\n", inet_ntoa(saddrin.sin_addr), buffer);
-      std::cout << "Packet n°" << i << " of size[" << packet->get_size() << "]:" << std::endl <<
-      "[" << *packet << "]" << std::endl;
+
+      std::cout << "#########################" << std::endl;
+      packet->print();
+
       delete packet;
     }
   if (close(fd) < 0)

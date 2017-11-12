@@ -6,7 +6,12 @@
 #
 
 SRC =		src/Sniffer.cpp 	\
-		src/Packet.cpp		\
+		src/FileCapture.cpp 	\
+		src/PacketFactory.cpp 	\
+		src/Packet.cpp 		\
+		src/PacketEthernet.cpp 	\
+		src/PacketIP.cpp 	\
+		src/PacketARP.cpp	\
 		src/Display.cpp		\
 		src/my_lcurses.cpp	\
 		src/ScrollTab.cpp	\

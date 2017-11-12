@@ -7,8 +7,8 @@
 **
 */
 
-#ifndef _SNIFFER_H_
-#define _SNIFFER_H_
+#ifndef _SNIFFER_HH_
+#define _SNIFFER_HH_
 
 #define BUF_SIZE 2048
 
@@ -23,4 +23,4 @@
 typedef struct sockaddr_in t_sockaddr_in;
 typedef struct iphdr t_iphdr;
 
-#endif /* _SNIFFER_H_ */
+#endif /* _SNIFFER_HH_ */
