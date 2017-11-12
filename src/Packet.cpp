@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 
 #include "Packet.hh"
@@ -38,6 +39,19 @@ std::vector<uint8_t>                Packet::get_payload(void) const {
     return _payload;
 }
 
+std::string                         Packet::to_string(void) {
+
+    std::stringstream   ss;
+
+    ss << std::hex;
+    for (auto &byte : _data)
+    {
+        ss << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    ss << std::dec;
+    return ss.str();
+}
+
 void                    Packet::print(void) const {
 
     std::cout << std::hex;
@@ -50,8 +64,6 @@ void                    Packet::print(void) const {
 
 std::ostream& operator<<(std::ostream &out, Packet packet)
 {
-    std::vector<uint8_t>::const_iterator    it;
-
     out << std::hex;
     for (auto &byte : packet.get_data())
     {

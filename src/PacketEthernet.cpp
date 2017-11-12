@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <cstddef>
 
@@ -38,6 +39,37 @@ std::array<uint8_t, ETH_ALEN>       PacketEthernet::get_mac_source(void)
 std::array<uint8_t, 2>              PacketEthernet::get_type(void)
 {
     return _type;
+}
+
+std::string                         PacketEthernet::to_string(void) {
+
+    std::stringstream   ss;
+
+    ss << "[Ethernet]";
+    // MAC Destination
+    ss << "MAC Destination=" << std::hex;
+    for (auto &byte : _mac_destination)
+    {
+        ss << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    ss << std::dec << ",";
+
+    // MAC Source
+    ss << "MAC Source=" << std::hex;
+    for (auto &byte : _mac_source)
+    {
+        ss << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    ss << std::dec << ",";
+
+    // Type
+    ss << "Type=" << std::hex;
+    for (auto &byte : _type)
+    {
+        ss << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    ss << std::dec ;
+    return ss.str();
 }
 
 void                                PacketEthernet::print(void) const {

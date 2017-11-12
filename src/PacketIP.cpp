@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 
 #include "PacketIP.hh"
@@ -31,6 +32,31 @@ std::array<uint8_t, 1>              PacketIP::get_version(void)
 std::array<uint8_t, 1>              PacketIP::get_protocol(void)
 {
     return _protocol;
+}
+
+std::string                         PacketIP::to_string(void) {
+
+    std::stringstream   ss;
+
+    ss << PacketEthernet::to_string();
+    ss << "[IP]";
+    // Version
+    ss << "Version=" << std::hex;
+    for (auto &byte : _version)
+    {
+        ss << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    ss << std::dec << ",";
+
+    // Protocol
+    ss << "Protocol=" << std::hex;
+    for (auto &byte : _protocol)
+    {
+        ss << std::setfill('0') << std::setw(2) << (unsigned int)byte;
+    }
+    ss << std::dec;
+
+    return ss.str();
 }
 
 void                                PacketIP::print(void) const {
