@@ -23,6 +23,8 @@ public:
     std::size_t                     get_payload_size(void) const;
     std::vector<uint8_t>            get_payload(void) const;
 
+    virtual std::string             to_string(void);
+
     virtual void                    print(void) const;
 };
 

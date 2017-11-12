@@ -33,7 +33,7 @@ CPPFLAGS =	-I./include -std=c++11 -W -Wall -Werror
 all:		$(NAME)
 
 $(NAME):	$(OBJ)
-		$(CC) $(NAME) -lcurses $(OBJ) $(CFLAGS)
+		$(CC) $(NAME) $(OBJ) $(CFLAGS) -lcurses
 
 clean:
 		$(RM) $(OBJ) $(AUTO_SAVED)

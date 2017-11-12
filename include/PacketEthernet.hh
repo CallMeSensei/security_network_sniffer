@@ -22,6 +22,8 @@ public:
     std::array<uint8_t, ETH_ALEN>          get_mac_source(void);
     std::array<uint8_t, 2>                 get_type(void);
 
+    virtual std::string                    to_string(void);
+
     virtual void                           print(void) const;
 };
 

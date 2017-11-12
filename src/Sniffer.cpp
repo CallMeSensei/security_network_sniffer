@@ -41,6 +41,7 @@ void		check_proto(t_iphdr *iph)
 
 int		main()
 {
+  Display d;
   Packet	*packet;
   int  		fd;
   t_sockaddr_in	saddrin;
@@ -56,13 +57,14 @@ int		main()
   d.floop();
   d.end_Display();
   
+  d.init_Display();
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
   if (fd < 0)
     {
       perror("Socket");
       return (EXIT_FAILURE);
     }
-  while (1)
+  while (d.loop())
     {
       saddrinlen = sizeof saddrin;
       recvlen = recvfrom(fd, &buffer, BUF_SIZE, 0, (struct sockaddr*)&saddrin, (socklen_t*)&saddrinlen);
@@ -74,14 +76,16 @@ int		main()
       packet = PacketFactory::create((uint8_t*)&buffer, recvlen);
       i++;
       iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
-      check_proto(iph);
+      //check_proto(iph);
       saddrin.sin_addr.s_addr = iph->saddr;
 
-      std::cout << "#########################" << std::endl;
-      packet->print();
+      /*std::cout << "#########################" << std::endl;
+      packet->print();*/
+      d.writePacket(packet->to_string());
 
       delete packet;
     }
+  d.end_Display();
   if (close(fd) < 0)
     {
       printf("Close failed");

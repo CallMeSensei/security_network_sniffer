@@ -22,6 +22,8 @@ public:
 
     std::array<uint8_t, 1>          get_protocol(void);
 
+    virtual std::string             to_string(void);
+
     virtual void                    print(void) const;
 };
 
