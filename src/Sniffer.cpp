@@ -51,11 +51,6 @@ int		main()
   t_iphdr	*iph;
   int		i = 0;
 
-  Display	d;
-
-  d.init_Display();
-  d.floop();
-  d.end_Display();
   
   d.init_Display();
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol

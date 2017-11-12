@@ -36,11 +36,6 @@ bool          Display::loop()
   lcurses->refresh();
   ch = lcurses->getInput();
 
-  
-  std::stringstream ss;
-  
-  ss << "-" << ch << "-";
-  writePacket(ss.str());
   switch (ch)
     {
     case 265:
@@ -52,10 +47,7 @@ bool          Display::loop()
       tab->moveDownScrollTab(1);
       break;
     case 266:
-      tab->moveDownScrollTab(1);
-      break;
-    case :
-      tab->moveDownScrollTab(1);
+      tab->moveAtEndScrollTab();
       break;
     }
   return true;
