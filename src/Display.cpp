@@ -34,17 +34,28 @@ bool          Display::loop()
   int ch = 0;
   
   lcurses->refresh();
-  lcurses->getInput(ch);
+  ch = lcurses->getInput();
+
   
+  std::stringstream ss;
+  
+  ss << "-" << ch << "-";
+  writePacket(ss.str());
   switch (ch)
     {
-    case 1:
+    case 265:
+      return false;
+    case 259:
+      tab->moveUpScrollTab(1);
       break;
-    case 2:
+    case 258:
+      tab->moveDownScrollTab(1);
       break;
-    case 3:
+    case 266:
+      tab->moveDownScrollTab(1);
       break;
-    case 4:
+    case :
+      tab->moveDownScrollTab(1);
       break;
     }
   return true;

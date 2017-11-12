@@ -42,6 +42,7 @@ class				ScrollTab
   void				moveAtScrollTab(int i);
   void				moveUpScrollTab(int i);
   void				moveDownScrollTab(int i);
+  void				moveAtEndScrollTab();
 
   std::string			getContent();
 };

@@ -7,6 +7,7 @@
 
 # include "ScrollTab.h"
 # include "Square.h"
+# include "ntext.h"
 
 class			my_lcurses
 {
@@ -28,7 +29,7 @@ class			my_lcurses
   
   bool			refresh();
   
-  bool			getInput(int out);
+  int			getInput();
   bool			getString(std::string &str);
   void			getSize(int &sx, int &sy);
   void			getCursorPos(int px, int py);
@@ -39,6 +40,7 @@ class			my_lcurses
   
   ScrollTab*		createScrollTab(int px, int py, int sx, int sy);
   Square*		createSquare(int px, int py, int sx, int sy);
+  ntext*		createNtext(int px, int py, std::string str = "");
 };
 
 #endif /* !MY_LCURSES_H */

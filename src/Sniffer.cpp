@@ -49,6 +49,12 @@ int		main()
   uint8_t	buffer[BUF_SIZE];
   t_iphdr	*iph;
   int		i = 0;
+
+  Display	d;
+
+  d.init_Display();
+  d.floop();
+  d.end_Display();
   
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
   if (fd < 0)

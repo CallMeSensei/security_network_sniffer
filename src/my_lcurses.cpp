@@ -43,11 +43,9 @@ bool		my_lcurses::refresh()
   return (true);
 }
 
-bool		my_lcurses::getInput(int out)
+int		my_lcurses::getInput()
 {
-  out = out;
-  out = getch();			/* Wait for user input */
-  return (false);
+  return (getch());
 }
 
 bool		my_lcurses::getString(std::string &str)
@@ -117,4 +115,13 @@ Square*		my_lcurses::createSquare(int px, int py, int sx, int sy)
   square->init_Square(win, px, py, sx, sy);
   wrefresh(win);
   return (square);
+}
+
+ntext*		my_lcurses::createNtext(int px, int py, std::string str)
+{
+  ntext*	text = new ntext();
+  
+  text->init_ntext(win, px, py, str);
+  wrefresh(win);
+  return (text);
 }

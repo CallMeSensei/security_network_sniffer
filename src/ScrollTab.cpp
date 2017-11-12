@@ -55,13 +55,20 @@ void			ScrollTab::writeScrollTab(std::string str)
     return;
   if (sizey <= 0)
     return;
-  for (auto line: formatElem(str))
+  if (idx + 1 == (int)histo.size())
     {
-      if ((int)content.size() >= sizey)
-	content.erase(content.begin());
-      content.push_back(line);
+      for (auto line: formatElem(str))
+	{
+	  if ((int)content.size() >= sizey)
+	    content.erase(content.begin());
+	  content.push_back(line);
+	}
+      idx++;
     }
-  idx++;
+  else
+    {
+      moveAtScrollTab(idx);
+    }
   eraseDisplay();
   display();
 }
@@ -124,24 +131,29 @@ void                  ScrollTab::clearContent()
 
 void			ScrollTab::moveAtScrollTab(int i)
 {
-  int				p = 0;
+  int				p;
   std::vector<std::string>	tmp;
   std::vector<std::string>::reverse_iterator	it;
   
   if (i < 0)
     i = 0;
-  if (i > (int)content.size() - 1)
-    i = content.size() - 1;
+  if (i >= (int)histo.size())
+    i = histo.size() - 1;
   content.clear();
-  while ((int)content.size() < (sizey - 2))
-    {
-      tmp = formatElem(histo[p++]);
-      it = tmp.rbegin();
-      for (;  it !=  tmp.rend(); it++)
-	if ((int)content.size() < (sizey - 2))
-	  content.insert(content.begin(), *it);
-    }
   idx = i;
+  while ((int)content.size() <= sizey - 1 && (int)histo.size() > i && i >= 0)
+    {
+      tmp = formatElem(histo[i--]);
+      p = tmp.size() - 1;
+      while(p >= 0)
+	{
+	  if ((int)content.size() <= sizey)
+	    {
+	      content.insert(content.begin(), tmp[p]);
+	    }
+	  p--;
+	}
+    }
   eraseDisplay();
   display();
 }
@@ -154,6 +166,11 @@ void                  ScrollTab::moveUpScrollTab(int i)
 void                  ScrollTab::moveDownScrollTab(int i)
 {
   moveAtScrollTab(idx + i);
+}
+
+void                  ScrollTab::moveAtEndScrollTab()
+{
+  moveAtScrollTab(histo.size());
 }
 
 std::string		ScrollTab::getContent()

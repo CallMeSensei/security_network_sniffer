@@ -15,6 +15,7 @@ SRC =		src/Sniffer.cpp 	\
 		src/Display.cpp		\
 		src/my_lcurses.cpp	\
 		src/ScrollTab.cpp	\
+		src/ntext.cpp		\
 		src/Square.cpp
 
 AUTO_SAVED =	src/*~ include/*~
