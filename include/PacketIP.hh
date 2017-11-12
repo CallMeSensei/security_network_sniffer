@@ -11,7 +11,9 @@ class PacketIP: public PacketEthernet
 {
 private:
     std::array<uint8_t, 1>          _version;
-
+    std::array<uint8_t, 1>          _tos;
+    std::array<uint8_t, 2>          _tot_len;
+    std::array<uint8_t, 2>          _id;
     std::array<uint8_t, 1>          _protocol;
 
 public:
@@ -19,7 +21,9 @@ public:
     virtual ~PacketIP();
 
     std::array<uint8_t, 1>          get_version(void);
-
+    std::array<uint8_t, 1>          get_tos(void);
+    std::array<uint8_t, 2>          get_tot_len(void);
+    std::array<uint8_t, 2>          get_id(void);
     std::array<uint8_t, 1>          get_protocol(void);
 
     virtual std::string             to_string(void);
