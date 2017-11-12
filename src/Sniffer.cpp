@@ -50,12 +50,6 @@ int		main()
   uint8_t	buffer[BUF_SIZE];
   t_iphdr	*iph;
   int		i = 0;
-
-  Display	d;
-
-  d.init_Display();
-  d.floop();
-  d.end_Display();
   
   d.init_Display();
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
@@ -81,9 +75,7 @@ int		main()
 
       /*std::cout << "#########################" << std::endl;
       packet->print();*/
-      d.writePacket(packet->to_string());
-
-      delete packet;
+      d.writePacket(packet);
     }
   d.end_Display();
   if (close(fd) < 0)

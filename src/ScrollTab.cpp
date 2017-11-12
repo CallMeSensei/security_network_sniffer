@@ -181,3 +181,8 @@ std::string		ScrollTab::getContent()
       tmp += elem + "\n";
   return tmp;
 }
+
+int			ScrollTab::getIdx()
+{
+  return (idx);
+}

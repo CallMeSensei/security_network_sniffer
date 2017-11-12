@@ -45,6 +45,7 @@ class				ScrollTab
   void				moveAtEndScrollTab();
 
   std::string			getContent();
+  int				getIdx();
 };
 
 #endif		/* !SCROLLTAB_H */

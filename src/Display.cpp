@@ -19,7 +19,8 @@ bool          Display::init_Display()
   if (!lcurses->init_window())
     return false;
   lcurses->getSize(sx, sy);
-  tab = lcurses->createScrollTab(0, 3, sx, 10);
+  tab = lcurses->createScrollTab(0, 3, sx, 12);
+  lowtab = lcurses->createScrollTab(0, 16, sx, sy - 16);
   return true;
 }
 
@@ -31,16 +32,11 @@ void          Display::floop()
 
 bool          Display::loop()
 {
-  int ch = 0;
+  int		ch = 0;
+  int		i;
   
   lcurses->refresh();
   ch = lcurses->getInput();
-
-  
-  std::stringstream ss;
-  
-  ss << "-" << ch << "-";
-  writePacket(ss.str());
   switch (ch)
     {
     case 265:
@@ -52,11 +48,19 @@ bool          Display::loop()
       tab->moveDownScrollTab(1);
       break;
     case 266:
-      tab->moveDownScrollTab(1);
+      tab->moveAtEndScrollTab();
       break;
-    case :
-      tab->moveDownScrollTab(1);
-      break;
+    }
+  
+  i = tab->getIdx();
+  if (i != idx)
+    {
+      idx = i;
+      if ((int)packetList.size() > idx && idx >= 0)
+	{
+	  lowtab->clearContent();
+	  lowtab->writeScrollTab(packetList[idx]->to_string());
+	}
     }
   return true;
 }
@@ -66,11 +70,12 @@ void          Display::end_Display()
   lcurses->end_window();
 }
 
-void          Display::writePacket(std::string str)
+void          Display::writePacket(Packet *p)
 {
   std::stringstream ss;
-  
-  ss << nbPacket << ")\t" << str;
+
+  packetList.push_back(p);
+  ss << nbPacket << ")\t" << p->to_string();
   tab->writeScrollTab(ss.str());
   nbPacket++;
 }
