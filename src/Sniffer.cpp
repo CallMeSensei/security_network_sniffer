@@ -11,6 +11,7 @@
 
 #include "Sniffer.h"
 #include "Packet.h"
+#include "Display.h"
 
 void		check_proto(t_iphdr *iph)
 {
@@ -36,15 +37,23 @@ void		check_proto(t_iphdr *iph)
 
 int		main()
 {
-  Packet  *packet;
+  Packet	*packet;
   int  		fd;
   t_sockaddr_in	saddrin;
   int		saddrinlen;
   int		recvlen;
-  uint8_t		buffer[BUF_SIZE];
+  uint8_t	buffer[BUF_SIZE];
   t_iphdr	*iph;
   int i = 0;
 
+  Display*	Disp = new Display();
+  Disp->init_Display();
+  Disp->floop();
+  while(Disp->loop());
+  Disp->end_Display();
+  return (0);
+
+  
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
   if (fd < 0)
     {
