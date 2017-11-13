@@ -39,15 +39,15 @@ bool          Display::loop()
   ch = lcurses->getInput();
   switch (ch)
     {
-    case 265:
+    case 'q':
       return false;
-    case 259:
+    case KEY_UP:
       tab->moveUpScrollTab(1);
       break;
-    case 258:
+    case KEY_DOWN:
       tab->moveDownScrollTab(1);
       break;
-    case 266:
+    case KEY_END:
       tab->moveAtEndScrollTab();
       break;
     }
