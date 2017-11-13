@@ -21,6 +21,5 @@
 #include <linux/ip.h> //struct iphdr
 
 typedef struct sockaddr_in t_sockaddr_in;
-typedef struct iphdr t_iphdr;
 
 #endif /* _SNIFFER_HH_ */
