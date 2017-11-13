@@ -18,6 +18,7 @@ bool                  ScrollTab::init_ScrollTab(WINDOW* w, int px, int py, int s
   posx = 0;
   posy = 0;
   name = n;
+  idx = -1;
   square = new Square();
   square->init_Square(w, px, py, sx, sy, n);
   display();
@@ -55,7 +56,7 @@ void			ScrollTab::writeScrollTab(std::string str)
     return;
   if (sizey <= 0)
     return;
-  if (idx + 1 == (int)histo.size())
+  if (idx >= (int)histo.size() - 2)
     {
       for (auto line: formatElem(str))
 	{
@@ -64,13 +65,9 @@ void			ScrollTab::writeScrollTab(std::string str)
 	  content.push_back(line);
 	}
       idx++;
+      eraseDisplay();
+      display();
     }
-  else
-    {
-      moveAtScrollTab(idx);
-    }
-  eraseDisplay();
-  display();
 }
 
 void		      ScrollTab::eraseDisplay()
@@ -127,6 +124,7 @@ void                  ScrollTab::clearContent()
   eraseDisplay();
   content.clear();
   histo.clear();
+  idx = 0;
 }
 
 void			ScrollTab::moveAtScrollTab(int i)
@@ -147,7 +145,7 @@ void			ScrollTab::moveAtScrollTab(int i)
       p = tmp.size() - 1;
       while(p >= 0)
 	{
-	  if ((int)content.size() <= sizey)
+	  if ((int)content.size() <= sizey - 1)
 	    {
 	      content.insert(content.begin(), tmp[p]);
 	    }
