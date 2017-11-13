@@ -18,6 +18,8 @@ bool          Display::init_Display()
   lcurses = new my_lcurses();
   if (!lcurses->init_window())
     return false;
+
+  idx = 0;
   lcurses->getSize(sx, sy);
   tab = lcurses->createScrollTab(0, 3, sx, 12);
   lowtab = lcurses->createScrollTab(0, 16, sx, sy - 16);
@@ -54,14 +56,15 @@ bool          Display::loop()
   i = tab->getIdx();
   if (i != idx)
     {
-        lcurses->refresh();
       idx = i;
+      printw("-%d-", idx);
       if ((int)packetList.size() > idx && idx >= 0)
       {
         lowtab->clearContent();
         lowtab->writeScrollTab(packetList[idx]->to_string());
       }
     }
+  lcurses->refresh();
   return true;
 }
 
@@ -75,7 +78,7 @@ void          Display::writePacket(Packet *p)
   std::stringstream ss;
 
   packetList.push_back(p);
-  ss << nbPacket << ")\t" << p->to_string();
+  ss << nbPacket << ") " << p->to_string();
   tab->writeScrollTab(ss.str());
   nbPacket++;
 }
