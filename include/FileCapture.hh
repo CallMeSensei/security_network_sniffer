@@ -29,6 +29,8 @@ typedef struct  fcap_packet_hdr_s {
 class FileCapture {
 
 private:
+  fcap_global_hdr_t   _ghdr;
+  fcap_packet_hdr_t   _phdr;
   std::ofstream       _file;
 
 public:

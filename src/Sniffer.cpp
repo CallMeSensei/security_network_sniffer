@@ -14,11 +14,13 @@
 #include "Packet.hh"
 #include "Display.h"
 #include "PacketFactory.hh"
+#include "FileCapture.hh"
 
 
-int		main()
+int		main(int argc, char **argv)
 {
   Display d;
+  FileCapture *fc;
   Packet	*packet;
   int  		fd;
   t_sockaddr_in	saddrin;
@@ -34,6 +36,13 @@ int		main()
       return (EXIT_FAILURE);
     }
   d.init_Display();
+
+    if (argc == 2) {
+      fc = new FileCapture(std::string(argv[1]), LINKTYPE_ETHERNET);
+    } else {
+      fc = nullptr;
+    }
+
   while (d.loop())
     {
       saddrinlen = sizeof saddrin;
@@ -47,10 +56,14 @@ int		main()
 	else*/ if (recvlen > 0)
 	{
 	  packet = PacketFactory::create((uint8_t*)&buffer, recvlen);
+    if (fc != nullptr)
+      *fc << *packet;
 	  d.writePacket(packet);
 	}
     }
   d.end_Display();
+  if (fc != nullptr)
+    delete fc;
   if (close(fd) < 0)
     {
       printf("Close failed");
