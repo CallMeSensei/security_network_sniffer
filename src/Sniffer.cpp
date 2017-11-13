@@ -8,6 +8,7 @@
 */
 #include <cstdlib>
 #include <iostream>
+#include <fcntl.h>
 
 #include "Sniffer.hh"
 #include "Packet.hh"
@@ -53,6 +54,7 @@ int		main()
   
   d.init_Display();
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
+  fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
   if (fd < 0)
     {
       perror("Socket");
@@ -62,20 +64,24 @@ int		main()
     {
       saddrinlen = sizeof saddrin;
       recvlen = recvfrom(fd, &buffer, BUF_SIZE, 0, (struct sockaddr*)&saddrin, (socklen_t*)&saddrinlen);
-      if (recvlen < 0)
+      /*if (recvlen < 0 && recvlen != EWOULDBLOCK && recvlen != EAGAIN)
         {
-          printf("recvfrom failed\n");
+	  perror("recvlen");
+	  d.end_Display();
           return (EXIT_FAILURE);
-        }
-      packet = PacketFactory::create((uint8_t*)&buffer, recvlen);
-      i++;
-      iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
-      //check_proto(iph);
-      saddrin.sin_addr.s_addr = iph->saddr;
+	}
+	else*/ if (recvlen > 0)
+	{
+	  packet = PacketFactory::create((uint8_t*)&buffer, recvlen);
+	  i++;
+	  iph = (struct iphdr*)(buffer  + sizeof(struct ethhdr));
+	  //check_proto(iph);
+	  saddrin.sin_addr.s_addr = iph->saddr;
 
-      /*std::cout << "#########################" << std::endl;
-      packet->print();*/
-      d.writePacket(packet);
+	  /*std::cout << "#########################" << std::endl;
+	    packet->print();*/
+	  d.writePacket(packet);
+	}
     }
   d.end_Display();
   if (close(fd) < 0)
