@@ -35,7 +35,6 @@ bool          Display::loop()
   int		ch = 0;
   int		i;
   
-  lcurses->refresh();
   ch = lcurses->getInput();
   switch (ch)
     {
@@ -55,12 +54,13 @@ bool          Display::loop()
   i = tab->getIdx();
   if (i != idx)
     {
+        lcurses->refresh();
       idx = i;
       if ((int)packetList.size() > idx && idx >= 0)
-	{
-	  lowtab->clearContent();
-	  lowtab->writeScrollTab(packetList[idx]->to_string());
-	}
+      {
+        lowtab->clearContent();
+        lowtab->writeScrollTab(packetList[idx]->to_string());
+      }
     }
   return true;
 }
