@@ -9,7 +9,7 @@
 class PacketFactory {
 
 public:
-    static Packet          *create(uint8_t *data, std::size_t len);
+    static Packet*          create(uint8_t *data, std::size_t len);
 };
 
 #endif /* !PACKETFACTORY_HH_ */
