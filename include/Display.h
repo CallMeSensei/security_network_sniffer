@@ -27,7 +27,7 @@ class		Display
   bool		loop();
   void		end_Display();
 
-  void		writePacket(Packet *p);
+  void		writePacket(Packet* p);
 };
 
 #endif /* !DISPLAY_H */

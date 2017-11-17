@@ -3,7 +3,7 @@
 
 #include "PacketFactory.hh"
 
-Packet          *PacketFactory::create(uint8_t *data, std::size_t len) {
+Packet*          PacketFactory::create(uint8_t *data, std::size_t len) {
 
     Packet      *p;
 
