@@ -43,6 +43,21 @@ PacketBuilder::PacketBuilder(int fd, char *interface_name, int dmac[])
     }
   _eh->ether_type = htons(ETH_P_IP);
   _len += sizeof(t_eh);
+  printf("ETH Packet created\n");
+  printf("MAC source addr:\t%x:%x:%x:%x:%x:%x\n",
+	 _eh->ether_shost[0],
+	 _eh->ether_shost[1],
+	 _eh->ether_shost[2],
+	 _eh->ether_shost[3],
+	 _eh->ether_shost[4],
+	 _eh->ether_shost[5]);
+  printf("MAC target addr:\t%x:%x:%x:%x:%x:%x\n",
+	 dmac[0],
+	 dmac[1],
+	 dmac[2],
+	 dmac[3],
+	 dmac[4],
+	 dmac[5]);
 }
 
 void	PacketBuilder::setIPHeader(char *sip, char *dip, int protocol, int ttl)
@@ -62,6 +77,9 @@ void	PacketBuilder::setIPHeader(char *sip, char *dip, int protocol, int ttl)
   _iph->daddr = inet_addr(dip);
   _iph->tot_len = htons(_len - sizeof(t_eh));
   _len += sizeof(t_iphdr);
+  printf("IP Packet created\n");
+  printf("IP source addr:\t%s\n", sip);
+  printf("IP target addr:\t%s\n", dip);
 }
 
 void	PacketBuilder::setICMPHeader(char *sip, char *dip, int ttl, int type)
@@ -75,6 +93,9 @@ void	PacketBuilder::setICMPHeader(char *sip, char *dip, int ttl, int type)
   _icmph->un.echo.id = rand();
   _icmph->checksum = 0;
   _len += sizeof(t_icmphdr);
+  printf("ICMP Packet created\n");
+  printf("IP source addr:\t%s\n", sip);
+  printf("IP target addr:\t%s\n", dip);
 }
 
 void	PacketBuilder::setIGMPHeader()
@@ -97,6 +118,11 @@ void	PacketBuilder::setUDPHeader(char *sip, char *dip, int sport, int dport, int
   _udph->check = 0;
   _udph->len = htons(_len - sizeof(t_eh) - sizeof(t_iphdr) + 8);
   _len += sizeof(t_udphdr);
+  printf("UDP Packet created\n");
+  printf("IP source addr:\t%s\n", sip);
+  printf("IP target addr:\t%s\n", dip);
+  printf("Source port:\t%d\n", sport);
+  printf("Target port:\t%d\n", dport);
 }
 
 void	PacketBuilder::setARPHeader(int smac[], int dmac[], char *sip, char *dip, int op)
@@ -120,8 +146,6 @@ void	PacketBuilder::setARPHeader(int smac[], int dmac[], char *sip, char *dip, i
       sip = &sip[spoint + 1];
       dip = &dip[dpoint + 1];
     }
-  printf("%d.%d.%d.%d\n", saddr[0], saddr[1], saddr[2], saddr[3]);
-  printf("%d.%d.%d.%d\n", daddr[0], daddr[1], daddr[2], daddr[3]);
   std::memset(_arpPacket, 0, ARP_PKT_LEN);
 
   //Ethernet Header
@@ -151,6 +175,23 @@ void	PacketBuilder::setARPHeader(int smac[], int dmac[], char *sip, char *dip, i
   _arph->ea_hdr.ar_pln = IP_V4_LEN;
   _arph->ea_hdr.ar_op = htons(op);
   _len = ARP_PKT_LEN;
+  printf("ARP Packet created\n");
+  printf("MAC source addr:\t%x:%x:%x:%x:%x:%x\n",
+	 smac[0],
+	 smac[1],
+	 smac[2],
+	 smac[3],
+	 smac[4],
+	 smac[5]);
+  printf("MAC target addr:\t%x:%x:%x:%x:%x:%x\n",
+	 dmac[0],
+	 dmac[1],
+	 dmac[2],
+	 dmac[3],
+	 dmac[4],
+	 dmac[5]);
+  printf("IP source addr:\t%s\n", sip);
+  printf("IP target addr:\t%s\n", dip);
 }
 
 void	PacketBuilder::setPlayload(char *p)

@@ -18,11 +18,18 @@ SRC =		src/Sniffer.cpp 	\
 		src/ntext.cpp		\
 		src/Square.cpp
 
+SRC2 =		src/PacketBuilder.cpp\
+		src/PSender.cpp
+
 AUTO_SAVED =	src/*~ include/*~
 
 OBJ =		$(SRC:.cpp=.o)
 
+OBJ2 =		$(SRC2:.cpp=.o)
+
 NAME =		Sniffer
+
+NAME2 =		PSender
 
 RM =		rm -f
 
@@ -30,15 +37,18 @@ CC =		g++ -o
 
 CPPFLAGS =	-I./include -std=c++11 -W -Wall -Werror 
 
-all:		$(NAME)
+all:		$(NAME) $(NAME2)
 
 $(NAME):	$(OBJ)
 		$(CC) $(NAME) $(OBJ) $(CFLAGS) -lcurses
 
+$(NAME2):	$(OBJ2)
+		$(CC) $(NAME2) $(OBJ2) $(CFLAGS)
+
 clean:
-		$(RM) $(OBJ) $(AUTO_SAVED)
+		$(RM) $(OBJ) $(OBJ2) $(AUTO_SAVED)
 
 fclean:		clean
-		$(RM) $(NAME)
+		$(RM) $(NAME) $(NAME2)
 
 re:		fclean all
