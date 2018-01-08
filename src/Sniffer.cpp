@@ -27,7 +27,7 @@ int		main(int argc, char **argv)
   int		saddrinlen;
   int		recvlen;
   uint8_t	buffer[BUF_SIZE];
-  
+
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL)); //ETH_P_ALL = receive all protocol
   fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
   if (fd < 0)

@@ -6,25 +6,15 @@
 **	Created on: 2017-11-11 21:05:54
 **
 */
+
 #ifndef PACKET_BUILDER_HH_
 #define PACKET_BUILDER_HH_
 
-#include <arpa/inet.h>
-#include <linux/if_packet.h>
-#include <linux/udp.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <netinet/ether.h>
-#include <netinet/ip_icmp.h>
+#include "PSender.hh"
 
 #include <cstring>
 
 #define BUF_SIZE 2048
-#define DEFAULT_PORT 4242
 #define DEFAULT_TTL 42
 #define IP_V4_LEN 4
 
@@ -56,7 +46,10 @@ class PacketBuilder
 {
 private:
   int		_fd;
+  t_pconf	_pconf;
   t_ifreq	_ipaddr;
+  t_ifreq       _interface;
+  t_ifreq       _mac;
   t_saddrll	_saddrll;
   t_eh		*_eh;
   t_iphdr	*_iph;
@@ -65,16 +58,16 @@ private:
   t_icmphdr	*_icmph;
   char		_buffer[BUF_SIZE];
   char		_arpPacket[ARP_PKT_LEN];
-  bool		_isARP = false;
-  int		_len;
+  int		_len = 0;
 public:
-  PacketBuilder(int fd, char *interface, int dmac[]);
-  void		setIPHeader(char *sip, char *dip, int protocol = IPPROTO_IP, int ttl=DEFAULT_TTL); //Set sip to NULL for use real ip
-  void		setICMPHeader(char *sip, char *dip, int ttl=DEFAULT_TTL, int type = ICMP_ECHO);
+  PacketBuilder(int fd, t_pconf pconf);
+  void		setEthernetHeader();
+  void		setIPHeader(int protocol = IPPROTO_IP, int ttl=DEFAULT_TTL);
+  void		setICMPHeader(int ttl=DEFAULT_TTL, int type = ICMP_ECHO);
   void		setIGMPHeader();
   void		setTCPHeader();
-  void		setUDPHeader(char *sip, char *dip, int sport=DEFAULT_PORT, int dport=DEFAULT_PORT, int ttl=DEFAULT_TTL);
-  void		setARPHeader(int smac[], int dmac[], char *sip, char *dip, int op = ARPOP_REQUEST);
+  void		setUDPHeader(int ttl=DEFAULT_TTL);
+  void		setARPHeader(int op = ARPOP_REQUEST);
   void		setPlayload(char *p);
   void		Send();
 };

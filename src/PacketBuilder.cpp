@@ -11,58 +11,58 @@
 
 #include "PacketBuilder.hh"
 
-PacketBuilder::PacketBuilder(int fd, char *interface_name, int dmac[])
+PacketBuilder::PacketBuilder(int fd, t_pconf pconf)
 {
-  t_ifreq	interface;
-  t_ifreq	mac;
-  
   _fd = fd;
-  std::memset(&interface, 0, sizeof interface);
-  std::strcpy(interface.ifr_name, interface_name);
-  if (ioctl(fd, SIOCGIFINDEX, &interface) < 0)
+  _pconf = pconf;
+  std::memset(&_interface, 0, sizeof _interface);
+  std::strcpy(_interface.ifr_name, _pconf.interface);
+  if (ioctl(fd, SIOCGIFINDEX, &_interface) < 0)
     perror("SIOCGIFINDEX");
-  std::memset(&mac, 0, sizeof mac);
-  std::strcpy(mac.ifr_name, interface_name);
-  if (ioctl(fd, SIOCGIFHWADDR, &mac) < 0)
+  std::memset(&_mac, 0, sizeof _mac);
+  std::strcpy(_mac.ifr_name, _pconf.interface);
+  if (ioctl(fd, SIOCGIFHWADDR, &_mac) < 0)
     perror("SIOCGIFHWADDR");
   std::memset(&_ipaddr, 0, sizeof _ipaddr);
-  std::strcpy(_ipaddr.ifr_name, interface_name);
+  std::strcpy(_ipaddr.ifr_name, _pconf.interface);
   if (ioctl(fd, SIOCGIFADDR, &_ipaddr) < 0)
     perror("SIOCGIFADDR");
+}
 
-  //Etherner header
+void	PacketBuilder::setEthernetHeader()
+{
+  //Ethernet header
   std::memset(_buffer, 0, BUF_SIZE);
   _eh = (t_eh *) _buffer;
-  _saddrll.sll_ifindex = interface.ifr_ifindex;
+  _saddrll.sll_ifindex = _interface.ifr_ifindex;
   _saddrll.sll_halen = ETH_ALEN;
   for (int i = 0; i < ETH_ALEN; i++)
     {
-      _eh->ether_shost[i] = ((uint8_t *)&mac.ifr_hwaddr.sa_data)[i];
-      _eh->ether_dhost[i] = dmac[i];
-      _saddrll.sll_addr[i] = dmac[i];
+      if (_pconf.mac_s_set)
+	_eh->ether_shost[i] = _pconf.mac_s[i];
+      else
+	{
+	  _eh->ether_shost[i] = ((uint8_t *)&_mac.ifr_hwaddr.sa_data)[i];
+	  _pconf.mac_s[i] = ((uint8_t *)&_mac.ifr_hwaddr.sa_data)[i];
+	}
+      _eh->ether_dhost[i] = _pconf.mac_d[i];
+      _saddrll.sll_addr[i] = _pconf.mac_d[i];
     }
-  _eh->ether_type = htons(ETH_P_IP);
-  _len += sizeof(t_eh);
   printf("ETH Packet created\n");
-  printf("MAC source addr:\t%x:%x:%x:%x:%x:%x\n",
-	 _eh->ether_shost[0],
-	 _eh->ether_shost[1],
-	 _eh->ether_shost[2],
-	 _eh->ether_shost[3],
-	 _eh->ether_shost[4],
-	 _eh->ether_shost[5]);
-  printf("MAC target addr:\t%x:%x:%x:%x:%x:%x\n",
-	 dmac[0],
-	 dmac[1],
-	 dmac[2],
-	 dmac[3],
-	 dmac[4],
-	 dmac[5]);
+  printf("Interface: %s\n", _pconf.interface);
+  if (strcmp(_pconf.packet, "ARP") == 0)
+    _eh->ether_type = htons(ETH_P_ARP);
+  else
+    _eh->ether_type = htons(ETH_P_IP);
+  _len += sizeof(t_eh);
+  print_mac_addr("MAC source addr:\t", _pconf.mac_s);
+  print_mac_addr("MAC target addr:\t", _pconf.mac_d);
 }
 
-void	PacketBuilder::setIPHeader(char *sip, char *dip, int protocol, int ttl)
+void	PacketBuilder::setIPHeader(int protocol, int ttl)
 {
   //IP Header
+  this->setEthernetHeader();
   _iph = (t_iphdr *) (_buffer + sizeof(t_eh));
   _iph->ihl = 5;
   _iph->version = 4;
@@ -70,22 +70,22 @@ void	PacketBuilder::setIPHeader(char *sip, char *dip, int protocol, int ttl)
   _iph->id = htons(12345);
   _iph->ttl = ttl;
   _iph->protocol = protocol;
-  if (sip == NULL)
+  if (_pconf.ip_s == NULL)
     _iph->saddr = inet_addr(inet_ntoa(((struct sockaddr_in *)&_ipaddr.ifr_addr)->sin_addr));
   else
-    _iph->saddr = inet_addr(sip);
-  _iph->daddr = inet_addr(dip);
+    _iph->saddr = inet_addr(_pconf.ip_s);
+  _iph->daddr = inet_addr(_pconf.ip_d);
   _iph->tot_len = htons(_len - sizeof(t_eh));
   _len += sizeof(t_iphdr);
   printf("IP Packet created\n");
-  printf("IP source addr:\t%s\n", sip);
-  printf("IP target addr:\t%s\n", dip);
+  printf("IP source addr:\t%s\n", _pconf.ip_s);
+  printf("IP target addr:\t%s\n", _pconf.ip_d);
 }
 
-void	PacketBuilder::setICMPHeader(char *sip, char *dip, int ttl, int type)
+void	PacketBuilder::setICMPHeader(int ttl, int type)
 {
   //ICMP Header
-  this->setIPHeader(sip, dip, IPPROTO_ICMP, ttl);
+  this->setIPHeader(IPPROTO_ICMP, ttl);
   _icmph = (t_icmphdr *) (_buffer + sizeof (t_iphdr) + sizeof (t_eh));
   _icmph->type = type;
   _icmph->code = 0;
@@ -94,79 +94,59 @@ void	PacketBuilder::setICMPHeader(char *sip, char *dip, int ttl, int type)
   _icmph->checksum = 0;
   _len += sizeof(t_icmphdr);
   printf("ICMP Packet created\n");
-  printf("IP source addr:\t%s\n", sip);
-  printf("IP target addr:\t%s\n", dip);
+  printf("IP source addr:\t%s\n", _pconf.ip_s);
+  printf("IP target addr:\t%s\n", _pconf.ip_d);
 }
 
 void	PacketBuilder::setIGMPHeader()
 {
   //IGMP Header
+  //TODO
 }
 
 void	PacketBuilder::setTCPHeader()
 {
   //TCP Header
+  //TODO
 }
 
-void	PacketBuilder::setUDPHeader(char *sip, char *dip, int sport, int dport, int ttl)
+void	PacketBuilder::setUDPHeader(int ttl)
 {
   //UDP Header
-  this->setIPHeader(sip, dip, IPPROTO_UDP, ttl);
+  this->setIPHeader(IPPROTO_UDP, ttl);
   _udph = (t_udphdr *) (_buffer + sizeof(t_iphdr) + sizeof(t_eh));
-  _udph->source = htons(sport);
-  _udph->dest = htons(dport);
+  _udph->source = htons(_pconf.port_s);
+  _udph->dest = htons(_pconf.port_d);
   _udph->check = 0;
   _udph->len = htons(_len - sizeof(t_eh) - sizeof(t_iphdr) + 8);
   _len += sizeof(t_udphdr);
   printf("UDP Packet created\n");
-  printf("IP source addr:\t%s\n", sip);
-  printf("IP target addr:\t%s\n", dip);
-  printf("Source port:\t%d\n", sport);
-  printf("Target port:\t%d\n", dport);
+  printf("Source port:\t%d\n", _pconf.port_s);
+  printf("Target port:\t%d\n", _pconf.port_d);
 }
 
-void	PacketBuilder::setARPHeader(int smac[], int dmac[], char *sip, char *dip, int op)
+void	PacketBuilder::setARPHeader(int op)
 {
-  int	saddr[IP_V4_LEN];
-  int	daddr[IP_V4_LEN];
-  int	spoint;
-  int	dpoint;
-  char	tmp[IP_V4_LEN];
+  int	ip_s[IP_V4_LEN];
+  int	ip_d[IP_V4_LEN];
 
-  for (int i = 0; i < IP_V4_LEN; i++)
-    {
-      for (spoint = 0; sip[spoint] != '.' && sip[spoint] != '\0'; spoint++);
-      for (dpoint = 0; dip[dpoint] != '.' && dip[dpoint] != '\0'; dpoint++);
-      std::memset(tmp, '\0', IP_V4_LEN);
-      std::memcpy(tmp, sip, spoint);
-      saddr[i] = atoi(tmp);
-      std::memset(tmp, '\0', IP_V4_LEN);
-      std::memcpy(tmp, dip, dpoint);
-      daddr[i] = atoi(tmp);
-      sip = &sip[spoint + 1];
-      dip = &dip[dpoint + 1];
-    }
-  std::memset(_arpPacket, 0, ARP_PKT_LEN);
-
-  //Ethernet Header
-  _eh = (t_eh *) _buffer;
   //ARP Header
+  this->setEthernetHeader();
+  std::memset(_arpPacket, 0, ARP_PKT_LEN);
   _arph = (t_earp *) (_buffer + sizeof(t_eh));
+  set_ip_addr(_pconf.ip_s, &ip_s[0]);
+  set_ip_addr(_pconf.ip_d, &ip_d[0]);
   for (int i = 0; i < ETH_ALEN; i++)
     {
-      _eh->ether_shost[i] = smac[i];
-      _eh->ether_dhost[i] = dmac[i];
-      _arph->arp_sha[i] = smac[i];
-      _arph->arp_tha[i] = dmac[i];
-      _saddrll.sll_addr[i] = dmac[i];
+      _arph->arp_sha[i] = _pconf.mac_s[i];
+      _arph->arp_tha[i] = _pconf.mac_d[i];
+      _saddrll.sll_addr[i] = _pconf.mac_d[i];
       if (i < IP_V4_LEN)
 	{
-	  _arph->arp_spa[i] = saddr[i];
-	  _arph->arp_tpa[i] = daddr[i];
+	  _arph->arp_spa[i] = ip_s[i];
+	  _arph->arp_tpa[i] = ip_d[i];
 	}
     }
-  _eh->ether_type = htons(ETH_P_ARP);
-
   _saddrll.sll_family = AF_PACKET;
   _arph = (t_earp *) (_buffer + sizeof(t_eh));
   _arph->ea_hdr.ar_hrd = htons(ARPHRD_ETHER);
@@ -176,27 +156,12 @@ void	PacketBuilder::setARPHeader(int smac[], int dmac[], char *sip, char *dip, i
   _arph->ea_hdr.ar_op = htons(op);
   _len = ARP_PKT_LEN;
   printf("ARP Packet created\n");
-  printf("MAC source addr:\t%x:%x:%x:%x:%x:%x\n",
-	 smac[0],
-	 smac[1],
-	 smac[2],
-	 smac[3],
-	 smac[4],
-	 smac[5]);
-  printf("MAC target addr:\t%x:%x:%x:%x:%x:%x\n",
-	 dmac[0],
-	 dmac[1],
-	 dmac[2],
-	 dmac[3],
-	 dmac[4],
-	 dmac[5]);
-  printf("IP source addr:\t%s\n", sip);
-  printf("IP target addr:\t%s\n", dip);
+  print_ip_addr("IP source addr:\t", ip_s);
+  print_ip_addr("IP target addr:\t", ip_d);
 }
 
 void	PacketBuilder::setPlayload(char *p)
 {
-  //Data playload
   for(int i = 0; p[i] != '\0'; i++)
       _buffer[_len++] = p[i];
 }
@@ -205,7 +170,7 @@ void	PacketBuilder::Send()
 {
   int	sendtoResult;
 
-  if (_isARP)
+  if (strcmp(_pconf.packet, "ARP") == 0)
     sendtoResult = sendto(_fd, _arpPacket, _len, 0, (struct sockaddr*)&_saddrll, sizeof(t_saddrll));
   else
     sendtoResult = sendto(_fd, _buffer, _len, 0, (struct sockaddr*)&_saddrll, sizeof(t_saddrll));
