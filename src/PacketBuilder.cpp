@@ -52,15 +52,15 @@ void	PacketBuilder::setEthernetHeader()
       _eh->ether_dhost[i] = _pconf.mac_d[i];
       _saddrll.sll_addr[i] = _pconf.mac_d[i];
     }
-  printf("ETH Packet created\n");
+  printf(COLOR_GREEN "[+] ETH Packet created\n" COLOR_RESET);
   printf("Interface: %s\n", _pconf.interface);
   if (strcmp(_pconf.packet, "ARP") == 0)
     _eh->ether_type = htons(ETH_P_ARP);
   else
     _eh->ether_type = htons(ETH_P_IP);
   _len += sizeof(t_eh);
-  print_mac_addr("MAC source addr:\t", _pconf.mac_s);
-  print_mac_addr("MAC target addr:\t", _pconf.mac_d);
+  print_mac_addr("\tMAC source addr:\t", _pconf.mac_s);
+  print_mac_addr("\tMAC target addr:\t", _pconf.mac_d);
 }
 
 void	PacketBuilder::setIPHeader(int protocol, int ttl)
@@ -81,9 +81,9 @@ void	PacketBuilder::setIPHeader(int protocol, int ttl)
   _iph->daddr = inet_addr(_pconf.ip_d);
   _iph->tot_len = htons(_len - sizeof(t_eh));
   _len += sizeof(t_iphdr);
-  printf("IP Packet created\n");
-  printf("IP source addr:\t%s\n", _pconf.ip_s);
-  printf("IP target addr:\t%s\n", _pconf.ip_d);
+  printf(COLOR_GREEN "[+] IP Packet created\n" COLOR_RESET);
+  printf("\tIP source addr:\t%s\n", _pconf.ip_s);
+  printf("\tIP target addr:\t%s\n", _pconf.ip_d);
 }
 
 void	PacketBuilder::setICMPHeader(int ttl, int type)
@@ -95,11 +95,9 @@ void	PacketBuilder::setICMPHeader(int ttl, int type)
   _icmph->code = 0;
   _icmph->un.echo.sequence = rand();
   _icmph->un.echo.id = rand();
-  _icmph->checksum = 0;
+  _icmph->checksum = 0; //TODO calculate checksum
   _len += sizeof(t_icmphdr);
-  printf("ICMP Packet created\n");
-  printf("IP source addr:\t%s\n", _pconf.ip_s);
-  printf("IP target addr:\t%s\n", _pconf.ip_d);
+  printf(COLOR_GREEN "[+] ICMP Packet created\n" COLOR_RESET);
 }
 
 void	PacketBuilder::setIGMPHeader()
@@ -124,9 +122,9 @@ void	PacketBuilder::setUDPHeader(int ttl)
   _udph->check = 0;
   _udph->len = htons(_len - sizeof(t_eh) - sizeof(t_iphdr) + 8);
   _len += sizeof(t_udphdr);
-  printf("UDP Packet created\n");
-  printf("Source port:\t%d\n", _pconf.port_s);
-  printf("Target port:\t%d\n", _pconf.port_d);
+  printf(COLOR_GREEN "[+] UDP Packet created\n" COLOR_RESET);
+  printf("\tSource port:\t%d\n", _pconf.port_s);
+  printf("\tTarget port:\t%d\n", _pconf.port_d);
 }
 
 void	PacketBuilder::setARPHeader(int op)
@@ -157,9 +155,9 @@ void	PacketBuilder::setARPHeader(int op)
   _arph->ea_hdr.ar_pln = IP_V4_LEN;
   _arph->ea_hdr.ar_op = htons(op);
   _len = ARP_PKT_LEN;
-  printf("ARP Packet created\n");
-  print_ip_addr("IP source addr:\t", ip_s);
-  print_ip_addr("IP target addr:\t", ip_d);
+  printf(COLOR_GREEN "[+] ARP Packet created\n" COLOR_RESET);
+  print_ip_addr("\tIP source addr:\t", ip_s);
+  print_ip_addr("\tIP target addr:\t", ip_d);
 }
 
 void	PacketBuilder::setPlayload(char *p)
@@ -177,5 +175,5 @@ void	PacketBuilder::Send()
   else
     sendtoResult = sendto(_fd, _buffer, _len, 0, (struct sockaddr*)&_saddrll, sizeof(t_saddrll));
   if (sendtoResult < 0)
-    perror("Send");
+    printf(COLOR_RED "[-] Send failed: %s\n" COLOR_RESET, strerror(errno));
 }

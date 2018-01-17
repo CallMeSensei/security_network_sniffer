@@ -33,7 +33,8 @@ int		main(int argc, char **argv)
     return clean(&pconf, 0, FALSE, 1);
   fd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
   if (fd < 0) {
-    perror("Socket");
+    printf(COLOR_RED "[-] %s\n" COLOR_RESET, strerror(errno));
+    printf("\tYou have to be root\n");
     return 1;
   }
   PacketBuilder *pb = new PacketBuilder(fd, pconf);
@@ -55,12 +56,12 @@ int		main(int argc, char **argv)
       pb->setARPHeader();
       break;
     case PACKET_NOT_FOUND:
-      printf("PACKET_TYPE not found\n"
+      printf(COLOR_RED "PACKET_TYPE not found\n" COLOR_RESET
 	     "\tPACKET_TYPE: ETH, IP, ICMP, UDP, ARP\n");
       return clean(&pconf, fd, TRUE, 1);
     }
   for (int i = 0; i < pconf.number; i++)
     pb->Send();
-  printf("%d packet sent\nEND\n", pconf.number);
+  printf(COLOR_GREEN "[+] Packet sent: %d\n" COLOR_RESET "END\n", pconf.number);
   return clean(&pconf, fd, TRUE, 0);
 }
