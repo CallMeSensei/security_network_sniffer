@@ -9,6 +9,17 @@
 
 #include "PacketBuilder.hh"
 
+int		clean(t_pconf *pconf, int fd, int close_fd, int retval)
+{
+  free(pconf->packet);
+  free(pconf->interface);
+  free(pconf->ip_s);
+  free(pconf->ip_d);
+  if (close_fd)
+    close(fd);
+  return retval;
+}
+
 int		main(int argc, char **argv)
 {
   int		fd;
@@ -19,7 +30,7 @@ int		main(int argc, char **argv)
     return 1;
   }
   if (parse_opt(argc, argv, &pconf) == 1)
-    return 0;
+    return clean(&pconf, 0, FALSE, 1);
   fd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
   if (fd < 0) {
     perror("Socket");
@@ -46,15 +57,10 @@ int		main(int argc, char **argv)
     case PACKET_NOT_FOUND:
       printf("PACKET_TYPE not found\n"
 	     "\tPACKET_TYPE: ETH, IP, ICMP, UDP, ARP\n");
-      close(fd);
-      return 1;
+      return clean(&pconf, fd, TRUE, 1);
     }
-  pb->Send();
-  printf("Packet sent\nEND\n");
-  free(pconf.packet);
-  free(pconf.interface);
-  free(pconf.ip_s);
-  free(pconf.ip_d);
-  close(fd);
-  return 0;
+  for (int i = 0; i < pconf.number; i++)
+    pb->Send();
+  printf("%d packet sent\nEND\n", pconf.number);
+  return clean(&pconf, fd, TRUE, 0);
 }

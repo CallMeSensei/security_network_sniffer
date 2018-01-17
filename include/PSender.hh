@@ -25,6 +25,8 @@
 
 #define DEFAULT_PORT 4242
 #define IP_V4_LEN 4
+#define TRUE 1
+#define FALSE 0
 
 enum		e_options
   {
@@ -36,7 +38,8 @@ enum		e_options
     MAC_SOURCE,
     MAC_DEST,
     PORT_SOURCE,
-    PORT_DEST
+    PORT_DEST,
+    NUMBER
   } typedef	options;
 
 enum		e_packets
@@ -61,6 +64,7 @@ struct		s_packet_config
   int		mac_d[ETH_ALEN];
   bool		mac_s_set = false;
   bool		ip_s_set = false;
+  int		number;
 } typedef	t_pconf;
 
 /* tool.cpp */
@@ -72,6 +76,7 @@ void		print_mac_addr(const char *type, int mac[ETH_ALEN]);
 void		print_ip_addr(const char *type, int ip[IP_V4_LEN]);
 void            set_packet_config(t_pconf *pconf, const char *packet);
 options		resolve_opt(const char *opt);
+int		is_number(char *str, const char *error);
 int		parse_opt(int argc, char **argv, t_pconf *pconf);
 packets		resolve_packet_type(const char *packet);
 

@@ -12,13 +12,16 @@
 void		usage()
 {
   printf("Usage: packetSender PACKET_TYPE [ARGS]\n"
-	          "\tPACKET_TYPE\tThe packet type (ETH, IP, UDP, ICMP, ARP)\n"
-	          "\t-h, ?, --help\tDisplay this help message\n"
-	          "\t-i\t\tThe interface to send packet on (eth0 by default)\n"
-	          "\t-ips\t\tA spoffed IP address (yours will be taken by default)\n"
-	          "\t-ipd\t\tThe target ip destination\n"
-	          "\t-macs\t\tA spoofed mac address(yours will be taken by default)\n"
-	 "\t-macd\t\tThe mac address target\n");
+	 "\tPACKET_TYPE\tThe packet type (ETH, IP, UDP, ICMP, ARP)\n"
+	 "\t-h, ?, --help\tDisplay this help message\n"
+	 "\t-i\t\tThe interface to send packet on (eth0 by default)\n"
+	 "\t-ips\t\tA spoffed IP address (yours will be taken by default)\n"
+	 "\t-ipd\t\tThe target ip destination\n"
+	 "\t-macs\t\tA spoofed mac address(yours will be taken by default)\n"
+	 "\t-macd\t\tThe target mac address\n"
+	 "\t-Ps\t\tThe source port for UDP\n"
+	 "\t-Pd\t\tThe destination port for UDP\n"
+	 "\t-n\t\tThe number of packets to send\n");
 }
 
 char*           create_string(const char *src) {
@@ -70,6 +73,7 @@ void		set_packet_config(t_pconf *pconf, const char *packet)
   pconf->interface = create_string("lo");
   pconf->ip_s = create_string("127.0.0.1");
   pconf->ip_d = create_string("127.0.0.1");
+  pconf->number = 1;
   set_mac_addr("00:11:22:33:44:55", &pconf->mac_d[0]);
 }
 
@@ -85,13 +89,27 @@ options		resolve_opt(const char *opt)
   if (strcmp(opt, "-macd") == 0) return MAC_DEST;
   if (strcmp(opt, "-Ps") == 0) return PORT_SOURCE;
   if (strcmp(opt, "-Pd") == 0) return PORT_DEST;
+  if (strcmp(opt, "-n") == 0) return NUMBER;
   return OPT_NOT_FOUND;
+}
+
+int		is_number(char *str, const char *error)
+{
+  int		len = strlen(str);
+
+  for (int i = 0; i < len; i++)
+    if (str[i] < '0' || str[i] > '9')
+      {
+	printf("%s\n", error);
+	return FALSE;
+      }
+  return TRUE;
 }
 
 int		parse_opt(int argc, char **argv, t_pconf *pconf)
 {
   set_packet_config(pconf, argv[1]);
-  for (int i = 1; i < argc; i++)
+  for (int i = 2; i < argc; i++)
     {
       switch (resolve_opt(argv[i]))
 	{
@@ -117,9 +135,17 @@ int		parse_opt(int argc, char **argv, t_pconf *pconf)
 	  set_mac_addr(argv[i + 1], &pconf->mac_d[0]);
 	  break;
 	case PORT_SOURCE:
+	  if (!is_number(argv[i + 1], "-Ps PORT - PORT as to be a number"))
+	    return 1;
 	  pconf->port_s = atoi(argv[i + 1]);
 	case PORT_DEST:
+	  if (!is_number(argv[i + 1], "-Pd PORT - PORT as to be a number"))
+	    return 1;
 	  pconf->port_d = atoi(argv[i + 1]);
+	case NUMBER:
+	  if (!is_number(argv[i + 1], "-n NUMBER - NUMBER is the number of packet to send as to be a number"))
+	    return 1;
+	  pconf->number = atoi(argv[i + 1]);
 	case OPT_NOT_FOUND:
 	  break;
 	}

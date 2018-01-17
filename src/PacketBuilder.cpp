@@ -27,13 +27,17 @@ PacketBuilder::PacketBuilder(int fd, t_pconf pconf)
   std::strcpy(_ipaddr.ifr_name, _pconf.interface);
   if (ioctl(fd, SIOCGIFADDR, &_ipaddr) < 0)
     perror("SIOCGIFADDR");
+  std::memset(_buffer, 0, BUF_SIZE);
+  std::memset(_arpPacket, 0, ARP_PKT_LEN);
 }
 
 void	PacketBuilder::setEthernetHeader()
 {
   //Ethernet header
-  std::memset(_buffer, 0, BUF_SIZE);
-  _eh = (t_eh *) _buffer;
+  if (strcmp(_pconf.packet, "ARP") == 0)
+    _eh = (t_eh *) _arpPacket;
+  else
+    _eh = (t_eh *) _buffer;
   _saddrll.sll_ifindex = _interface.ifr_ifindex;
   _saddrll.sll_halen = ETH_ALEN;
   for (int i = 0; i < ETH_ALEN; i++)
@@ -132,8 +136,7 @@ void	PacketBuilder::setARPHeader(int op)
 
   //ARP Header
   this->setEthernetHeader();
-  std::memset(_arpPacket, 0, ARP_PKT_LEN);
-  _arph = (t_earp *) (_buffer + sizeof(t_eh));
+  _arph = (t_earp *) (_arpPacket + sizeof(t_eh));
   set_ip_addr(_pconf.ip_s, &ip_s[0]);
   set_ip_addr(_pconf.ip_d, &ip_d[0]);
   for (int i = 0; i < ETH_ALEN; i++)
@@ -147,8 +150,8 @@ void	PacketBuilder::setARPHeader(int op)
 	  _arph->arp_tpa[i] = ip_d[i];
 	}
     }
+  _eh->ether_type = htons(ETH_P_ARP);
   _saddrll.sll_family = AF_PACKET;
-  _arph = (t_earp *) (_buffer + sizeof(t_eh));
   _arph->ea_hdr.ar_hrd = htons(ARPHRD_ETHER);
   _arph->ea_hdr.ar_pro = htons(ETH_P_IP);
   _arph->ea_hdr.ar_hln = ETH_ALEN;
