@@ -150,7 +150,6 @@ void	PacketBuilder::setARPHeader(int op)
 	  _arph->arp_tpa[i] = ip_d[i];
 	}
     }
-  _eh->ether_type = htons(ETH_P_ARP);
   _saddrll.sll_family = AF_PACKET;
   _arph->ea_hdr.ar_hrd = htons(ARPHRD_ETHER);
   _arph->ea_hdr.ar_pro = htons(ETH_P_IP);
