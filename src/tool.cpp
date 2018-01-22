@@ -109,7 +109,7 @@ int		is_number(char *str, const char *error)
 int		parse_opt(int argc, char **argv, t_pconf *pconf)
 {
   set_packet_config(pconf, argv[1]);
-  for (int i = 2; i < argc; i++)
+  for (int i = 1; i < argc; i++)
     {
       switch (resolve_opt(argv[i]))
 	{
