@@ -26,8 +26,6 @@
 
 #define DEFAULT_PORT 4242
 #define IP_V4_LEN 4
-#define TRUE 1
-#define FALSE 0
 
 #define COLOR_RED     "\x1b[31m"
 #define COLOR_GREEN   "\x1b[32m"
@@ -41,6 +39,7 @@ enum		e_options
   {
     OPT_NOT_FOUND,
     HELP,
+    HELP_SPECIAL,
     INTERFACE,
     IP_SOURCE,
     IP_DEST,
@@ -48,6 +47,7 @@ enum		e_options
     MAC_DEST,
     PORT_SOURCE,
     PORT_DEST,
+    ARP_OP,
     NUMBER
   } typedef	options;
 
@@ -56,8 +56,10 @@ enum		e_packets
     PACKET_NOT_FOUND,
     ETH,
     IP,
-    UDP,
     ICMP,
+    IGMP,
+    TCP,
+    UDP,
     ARP
   } typedef	packets;
 
@@ -71,13 +73,14 @@ struct		s_packet_config
   int		port_d = DEFAULT_PORT;
   int		mac_s[ETH_ALEN];
   int		mac_d[ETH_ALEN];
-  bool		mac_s_set = false;
-  bool		ip_s_set = false;
+  int		op;
   int		number;
 } typedef	t_pconf;
 
 /* tool.cpp */
-void		usage();
+int		usage(const char *name);
+int		print_op_help();
+int		print_packet_help();
 char*		create_string(const char *src);
 void		set_mac_addr(const char *src, int *dst);
 void		set_ip_addr(const char *src, int *dst);
@@ -85,7 +88,7 @@ void		print_mac_addr(const char *type, int mac[ETH_ALEN]);
 void		print_ip_addr(const char *type, int ip[IP_V4_LEN]);
 void            set_packet_config(t_pconf *pconf, const char *packet);
 options		resolve_opt(const char *opt);
-int		is_number(char *str, const char *error);
+bool		is_number(char *str, const char *error);
 int		parse_opt(int argc, char **argv, t_pconf *pconf);
 packets		resolve_packet_type(const char *packet);
 

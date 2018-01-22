@@ -18,17 +18,22 @@ PacketBuilder::PacketBuilder(int fd, t_pconf pconf)
   std::memset(&_interface, 0, sizeof _interface);
   std::strcpy(_interface.ifr_name, _pconf.interface);
   if (ioctl(fd, SIOCGIFINDEX, &_interface) < 0)
-    perror("SIOCGIFINDEX");
+    printf(COLOR_RED "[-] Set interface failed (SIOCGIFINDEX): %s\n" COLOR_RESET, strerror(errno));
   std::memset(&_mac, 0, sizeof _mac);
   std::strcpy(_mac.ifr_name, _pconf.interface);
   if (ioctl(fd, SIOCGIFHWADDR, &_mac) < 0)
-    perror("SIOCGIFHWADDR");
+    printf(COLOR_RED "[-] Set mac failed (SIOCGIFHWADDR): %s\n" COLOR_RESET, strerror(errno));
   std::memset(&_ipaddr, 0, sizeof _ipaddr);
   std::strcpy(_ipaddr.ifr_name, _pconf.interface);
   if (ioctl(fd, SIOCGIFADDR, &_ipaddr) < 0)
-    perror("SIOCGIFADDR");
+    printf(COLOR_RED "[-] Set ipaddr failed (SIOCGIFADDR): %s\n" COLOR_RESET, strerror(errno));
   std::memset(_buffer, 0, BUF_SIZE);
   std::memset(_arpPacket, 0, ARP_PKT_LEN);
+  if (_pconf.ip_s == NULL)
+    _pconf.ip_s = create_string(inet_ntoa(((struct sockaddr_in *)&_ipaddr.ifr_addr)->sin_addr));
+  if (_pconf.mac_s[0] < 0)
+    for (int i = 0; i < ETH_ALEN; i++)
+      _pconf.mac_s[i] = ((uint8_t *)&_mac.ifr_hwaddr.sa_data)[i];
 }
 
 void	PacketBuilder::setEthernetHeader()
@@ -42,13 +47,7 @@ void	PacketBuilder::setEthernetHeader()
   _saddrll.sll_halen = ETH_ALEN;
   for (int i = 0; i < ETH_ALEN; i++)
     {
-      if (_pconf.mac_s_set)
-	_eh->ether_shost[i] = _pconf.mac_s[i];
-      else
-	{
-	  _eh->ether_shost[i] = ((uint8_t *)&_mac.ifr_hwaddr.sa_data)[i];
-	  _pconf.mac_s[i] = ((uint8_t *)&_mac.ifr_hwaddr.sa_data)[i];
-	}
+      _eh->ether_shost[i] = _pconf.mac_s[i];
       _eh->ether_dhost[i] = _pconf.mac_d[i];
       _saddrll.sll_addr[i] = _pconf.mac_d[i];
     }
@@ -104,12 +103,14 @@ void	PacketBuilder::setIGMPHeader()
 {
   //IGMP Header
   //TODO
+  printf(COLOR_YELLOW "[*] Not yet implemented\n" COLOR_RESET);
 }
 
 void	PacketBuilder::setTCPHeader()
 {
   //TCP Header
   //TODO
+  printf(COLOR_YELLOW "[*] Not yet implemented\n" COLOR_RESET);
 }
 
 void	PacketBuilder::setUDPHeader(int ttl)
@@ -127,7 +128,7 @@ void	PacketBuilder::setUDPHeader(int ttl)
   printf("\tTarget port:\t%d\n", _pconf.port_d);
 }
 
-void	PacketBuilder::setARPHeader(int op)
+void	PacketBuilder::setARPHeader()
 {
   int	ip_s[IP_V4_LEN];
   int	ip_d[IP_V4_LEN];
@@ -153,9 +154,10 @@ void	PacketBuilder::setARPHeader(int op)
   _arph->ea_hdr.ar_pro = htons(ETH_P_IP);
   _arph->ea_hdr.ar_hln = ETH_ALEN;
   _arph->ea_hdr.ar_pln = IP_V4_LEN;
-  _arph->ea_hdr.ar_op = htons(op);
+  _arph->ea_hdr.ar_op = htons(_pconf.op);
   _len = ARP_PKT_LEN;
   printf(COLOR_GREEN "[+] ARP Packet created\n" COLOR_RESET);
+  printf("Opeartion: %d\n", _pconf.op);
   print_ip_addr("\tIP source addr:\t", ip_s);
   print_ip_addr("\tIP target addr:\t", ip_d);
 }

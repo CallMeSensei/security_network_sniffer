@@ -16,7 +16,6 @@
 #include "PacketFactory.hh"
 #include "FileCapture.hh"
 
-
 int		main(int argc, char **argv)
 {
   Display d;

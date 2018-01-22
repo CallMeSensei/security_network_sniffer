@@ -7,6 +7,8 @@
 
 SRC =		src/PacketBuilder.cpp\
 		src/tool.cpp\
+		src/help.cpp\
+		src/print_set_addr.cpp\
 		src/PSender.cpp
 
 SRC2 =		src/Sniffer.cpp 	\

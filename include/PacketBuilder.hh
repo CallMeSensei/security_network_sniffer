@@ -15,7 +15,7 @@
 #include <cstring>
 
 #define BUF_SIZE 2048
-#define DEFAULT_TTL 42
+#define DEFAULT_TTL 64
 #define IP_V4_LEN 4
 
 #define ICMP_ECHOREPLY		0	/* Echo Reply*/
@@ -67,7 +67,14 @@ public:
   void		setIGMPHeader();
   void		setTCPHeader();
   void		setUDPHeader(int ttl=DEFAULT_TTL);
-  void		setARPHeader(int op = ARPOP_REQUEST);
+  void		setARPHeader();
+  /* op values: */
+  /* ARPOP_REQUEST	1 request to resolve address */
+  /* ARPOP_REPLY	2 response to previous request */
+  /* ARPOP_REVREQUEST	3 request protocol address given hardware */
+  /* ARPOP_REVREPLY	4 response giving protocol address */
+  /* ARPOP_INVREQUEST	8 request to identify peer */
+  /* ARPOP_INVREPLY	9 response identifying peer */
   void		setPlayload(char *p);
   void		Send();
 };
