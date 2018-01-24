@@ -47,6 +47,7 @@ options		resolve_opt(const char *opt)
   if (strcmp(opt, "-Pd") == 0) return PORT_DEST;
   if (strcmp(opt, "-op") == 0) return ARP_OP;
   if (strcmp(opt, "-n") == 0) return NUMBER;
+  if (strcmp(opt, "-t") == 0) return TIME;
   return OPT_NOT_FOUND;
 }
 
@@ -76,7 +77,9 @@ int		parse_opt(int argc, char **argv, t_pconf *pconf)
 	  if (argc > (i + 1))
 	    {
 	      if (strcmp(argv[i + 1], "op") == 0) return print_op_help();
-	      if (strcmp(argv[i + 1], "PACKET") == 0) return print_packet_help();
+	      if (strcmp(argv[i + 1], "PACKET") == 0) return print_packets_help();
+	      if (resolve_packet(argv[i + 1]) != PACKET_NOT_FOUND)
+		return print_packet_help(resolve_packet(argv[i + 1]));
 	    }
 	  return usage(argv[0]);
 	case INTERFACE:
@@ -108,9 +111,15 @@ int		parse_opt(int argc, char **argv, t_pconf *pconf)
 	  pconf->op = atoi(argv[i + 1]);
 	  break;
 	case NUMBER:
-	  if (!is_number(argv[i + 1], "-n NUMBER - NUMBER is the number of packet to send as to be a number"))
+	  if (!is_number(argv[i + 1], "-n NUMBER - NUMBER as to be a number"))
 	    return 1;
 	  pconf->number = atoi(argv[i + 1]);
+	  break;
+	case TIME:
+	  if (!is_number(argv[i + 1], "-t TIME - TIME as to be a number"))
+	    return 1;
+	  pconf->time = atoi(argv[i + 1]);
+	  break;
 	case OPT_NOT_FOUND:
 	  break;
 	}
@@ -118,7 +127,7 @@ int		parse_opt(int argc, char **argv, t_pconf *pconf)
   return 0;
 }
 
-packets		resolve_packet_type(const char *packet)
+packets		resolve_packet(const char *packet)
 {
   if (strcmp(packet, "ETH") == 0) return ETH;
   if (strcmp(packet, "IP") == 0) return IP;

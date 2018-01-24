@@ -11,7 +11,7 @@
 
 int             usage(const char *name)
 {
-  printf("Usage: %s PACKET_TYPE [ARGS]\n"
+  printf("Usage: %s PACKET [ARGS]\n"
 	 "\tPACKET\n\t\tThe packet type (ETH, IP, UDP, ICMP, ARP, \"%s ? PACKET\" for more)\n\n"
 	 "\t-h, ?, --help\n\t\tDisplay this help message\n\n"
 	 "\t?\tFEATURE\n\t\tDisplay a detailed help message about the feature\n\n"
@@ -23,7 +23,8 @@ int             usage(const char *name)
 	 "\t-Ps\tPORT_SOURCE\n\t\tThe source port for UDP\n\n"
 	 "\t-Pd\tPORT_DESTINATION\n\t\tThe destination port for UDP\n\n"
 	 "\t-op\tOPERATION\n\t\tThe operation for ARP packet (\"%s ? op\" for more)\n\n"
-	 "\t-n\tNUMBER\n\t\tThe number of packets to send\n", name, name, name);
+	 "\t-n\tNUMBER\n\t\tThe number of packets to send\n"
+	 "\t-t\tTIME\n\t\tThe time between each packet send\n", name, name, name);
   return 1;
 }
 
@@ -39,14 +40,55 @@ int             print_op_help()
   return 1;
 }
 
-int		print_packet_help()
+int		print_packets_help()
 {
-  printf("PACKET\n\tPACKET values: ETH, IP, ICMP, UDP, ARP:\n\n"
-	 "\tETH\tOptions:\n\t\t-i INTERFACE, -macs MAC_ADDR_SOURCE, -macd MAC_ADDR_DESTINATION\n\n"
-	 "\tIP\tOptions:\n\t\t-ips IP_ADDR_SOURCE, -ipd IP_ADDR_DESTINATION\n\t\tInherit ETH options\n\n"
-	 "\tICMP\n\t\tNo options\n\t\tInherit IP options\n\n"
-	 "\tUDP\tOptions:\n\t\t-Ps PORT_SOURCE, -Pd PORT_DESTINATION\n\t\tInherit IP options\n\n"
-	 "\tARP\tOptions:\n\t\t-ips IP_ADDR_SOURCE, -ipd IP_ADDR_DESTINATION -op OPERATION"
-	 "\n\t\tInherit ETH options\n");
+  printf("PACKET\n\tPACKET values: ETH, IP, ICMP, UDP, ARP:\n\n");
+  print_packet_help(ETH);
+  printf("\n");
+  print_packet_help(IP);
+  printf("\n");
+  print_packet_help(ICMP);
+  printf("\n");
+  // print_packet_help(IGMP);
+  // printf("\n");
+  // print_packet_help(TCP);
+  // printf("\n");
+  print_packet_help(UDP);
+  printf("\n");
+  print_packet_help(ARP);
+  return 1;
+}
+
+int		print_packet_help(packets p)
+{
+  switch (p)
+    {
+    case ETH:
+      printf("\tETH\tOptions:\n\t\t-i INTERFACE, -macs MAC_ADDR_SOURCE, -macd MAC_ADDR_DESTINATION\n");
+      break;
+    case IP:
+      printf("\tIP\tOptions:\n\t\t-ips IP_ADDR_SOURCE, -ipd IP_ADDR_DESTINATION\n\t\tInherit ETH options\n");
+      break;
+    case ICMP:
+      printf("\tICMP\n\t\tNo options\n\t\tInherit IP options\n");
+      break;
+    case IGMP:
+      printf("\tIGMP\n\t\tNot implemented\n");
+      break;
+    case TCP:
+      printf("\tTCP\n\t\tNot implemented\n");
+      break;
+    case UDP:
+      printf("\tUDP\tOptions:\n\t\t-Ps PORT_SOURCE, -Pd PORT_DESTINATION\n\t\tInherit IP options\n");
+      break;
+    case ARP:
+      printf("\tARP\tOptions:\n\t\t-ips IP_ADDR_SOURCE, -ipd IP_ADDR_DESTINATION -op OPERATION\n"
+	     "\t\tInherit ETH options\n");
+      break;
+    case PACKET_NOT_FOUND:
+      printf(COLOR_RED "PACKET not found\n" COLOR_RESET
+	     "\tPACKET: ETH, IP, ICMP, UDP, ARP\n");
+      break;
+    }
   return 1;
 }

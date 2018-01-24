@@ -9,40 +9,44 @@
 
 #include "PacketBuilder.hh"
 
-int		clean(t_pconf *pconf, int fd, bool close_fd, int retval)
+t_pconf	pconf;
+int	fd;
+int	count = 0;
+
+int	clean(bool close_fd, int retval)
 {
-  free(pconf->packet);
-  free(pconf->interface);
-  free(pconf->ip_s);
-  free(pconf->ip_d);
+  free(pconf.packet);
+  free(pconf.interface);
+  free(pconf.ip_s);
+  free(pconf.ip_d);
   if (close_fd)
     close(fd);
   return retval;
 }
 
-int		packet_not_found()
+void	make_clean(int)
 {
-  printf(COLOR_RED "PACKET_TYPE not found\n" COLOR_RESET
-	 "\tPACKET_TYPE: ETH, IP, ICMP, UDP, ARP\n");
-  return 1;
+  clean(true, 0);
+  printf(COLOR_YELLOW "\b\b[*] User abort signal received\n" COLOR_RESET);
+  printf(COLOR_GREEN "[+] Packet sent: %d\n" COLOR_RESET "- END -\n", count);
+  exit(0);
 }
 
-int		main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-  int		fd;
-  t_pconf	pconf;
-
   if (argc < 2) return usage(argv[0]);
-  if (parse_opt(argc, argv, &pconf) == 1) return clean(&pconf, 0, false, 1);
-  if (resolve_packet_type(argv[1]) == PACKET_NOT_FOUND) return packet_not_found();
+  if (parse_opt(argc, argv, &pconf) == 1) return clean(false, 1);
+  if (resolve_packet(argv[1]) == PACKET_NOT_FOUND)
+    return print_packet_help(PACKET_NOT_FOUND);
   fd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
   if (fd < 0) {
     printf(COLOR_RED "[-] %s\n" COLOR_RESET, strerror(errno));
     printf("\tYou have to be root\n");
     return 1;
   }
+  signal(SIGINT, make_clean);
   PacketBuilder *pb = new PacketBuilder(fd, pconf);
-  switch (resolve_packet_type(pconf.packet))
+  switch (resolve_packet(pconf.packet))
     {
     case ETH:
       pb->setEthernetHeader();
@@ -55,10 +59,10 @@ int		main(int argc, char **argv)
       break;
     case IGMP:
       pb->setIGMPHeader();
-      return clean(&pconf, fd, true, 1);
+      return clean(true, 1);
     case TCP:
       pb->setTCPHeader();
-      return clean(&pconf, fd, true, 1);
+      return clean(true, 1);
     case UDP:
       pb->setUDPHeader();
       break;
@@ -66,11 +70,14 @@ int		main(int argc, char **argv)
       pb->setARPHeader();
       break;
     case PACKET_NOT_FOUND:
-      packet_not_found();
-      return clean(&pconf, fd, true, 1);
+      print_packet_help(PACKET_NOT_FOUND);
+      return clean(true, 1);
     }
-  for (int i = 0; i < pconf.number; i++)
-    pb->Send();
-  printf(COLOR_GREEN "[+] Packet sent: %d\n" COLOR_RESET "END\n", pconf.number);
-  return clean(&pconf, fd, true, 0);
+  for (; count < pconf.number; count++)
+    {
+      pb->Send();
+      if (pconf.time > 0) sleep(pconf.time);
+    }
+  printf(COLOR_GREEN "[+] Packet sent: %d\n" COLOR_RESET "- END -\n", count);
+  return clean(true, 0);
 }

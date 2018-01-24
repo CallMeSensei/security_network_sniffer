@@ -1,3 +1,4 @@
+
 /*
 **
 **	Network security project - file: PSender.hh
@@ -23,6 +24,7 @@
 #include <netinet/ip_icmp.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
 
 #define DEFAULT_PORT 4242
 #define IP_V4_LEN 4
@@ -48,7 +50,8 @@ enum		e_options
     PORT_SOURCE,
     PORT_DEST,
     ARP_OP,
-    NUMBER
+    NUMBER,
+    TIME
   } typedef	options;
 
 enum		e_packets
@@ -75,12 +78,14 @@ struct		s_packet_config
   int		mac_d[ETH_ALEN];
   int		op;
   int		number;
+  int		time = 0;
 } typedef	t_pconf;
 
 /* tool.cpp */
 int		usage(const char *name);
 int		print_op_help();
-int		print_packet_help();
+int		print_packets_help();
+int		print_packet_help(packets);
 char*		create_string(const char *src);
 void		set_mac_addr(const char *src, int *dst);
 void		set_ip_addr(const char *src, int *dst);
@@ -90,6 +95,6 @@ void            set_packet_config(t_pconf *pconf, const char *packet);
 options		resolve_opt(const char *opt);
 bool		is_number(char *str, const char *error);
 int		parse_opt(int argc, char **argv, t_pconf *pconf);
-packets		resolve_packet_type(const char *packet);
+packets		resolve_packet(const char *packet);
 
 #endif /* PSENDER_HH_ */
